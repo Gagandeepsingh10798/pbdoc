@@ -4,12 +4,13 @@ Import Required Modules
 const config = require('config');
 const http = require("http");
 const cors = require("cors");
- 
 const morgan = require('morgan');
 const express = require("express");
 const Models = require("./data-models");
 const mongoose = require('mongoose');
+const swaggerUI = require('swagger-ui-express');
 const { MESSAGES } = require("./constants");
+const swaggerDocument = require('./swagger-doc/v1/client/swagger.json');
 const app = express();
 app.use(cors());
 
@@ -58,13 +59,13 @@ app.use('/api', route);
 /*
 Swagger setup
 */
-app.use('/api-docs/client',swaggerUI.serve,swaggerUI.setup(swaggerDocument));
+app.use('/api-docs/client', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
 /*
 Catch 404 Error
 */
 app.use(async (req, res, next) => {
-    
+
     res.status(404).send({ status: 404, message: "Invalid Route", data: {} });
 
 });
@@ -73,17 +74,10 @@ Error Handler
 */
 
 app.use(async (err, req, res, next) => {
-
-    
-    console.log(err);
-const LogsModel =  Models.logs;
-let error= await new LogsModel({message:err.stack}).save();
-console.log(error);
-// let find= await LogsModel.find();
-// console.log(find);
- 
+    const LogsModel = Models.logs;
+    await new LogsModel({ message: err.stack }).save();
     if (err.message == "jwt expired" || err.message == "invalid signature" || err.message == "No Auth") err.status = 401;
     const status = err.status || 400;
-    if (typeof err == typeof "") { res.status(status).send({status: status, message: err.message || err || ""});}
-    else res.status(status).send({ status: status, message: err.message || ""  });
+    if (typeof err == typeof "") { res.status(status).send({ status: status, message: err.message || err || "" }); }
+    else res.status(status).send({ status: status, message: err.message || "" });
 });
