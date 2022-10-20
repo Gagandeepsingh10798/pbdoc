@@ -1,0 +1,156 @@
+const joi = require('joi');
+
+const validateSchema = async (schema, data) => {
+    try {
+        let validationResult = await schema.validate(data);
+        if (validationResult.error) {
+            let err = validationResult.error;
+            throw err.details ? err.details[0].message.replace(/['"]+/g, '') : "";
+        }
+        return;
+    } catch (err) {
+        throw err;
+    }
+};
+
+module.exports = {
+    validateCreateAdmin: async (data) => {
+        try {
+            let schema = joi.object().keys({
+                firstName: joi.string().min(3).max(50).optional(),
+                lastName: joi.string().min(3).max(50).optional(),
+                email: joi.string().trim().lowercase().required(),
+                phone: joi
+                    .string()
+                    .regex(/^[0-9]+$/)
+                    .min(5)
+                    .required(),
+                countryCode: joi
+                    .string()
+                    .regex(/^[0-9,+]+$/)
+                    .trim()
+                    .min(2)
+                    .required(),
+                password: joi.string().min(3).max(50).required(),
+                address: joi.string().min(3).max(50).optional(),
+                deviceType: joi.string().allow(...['IOS', 'ANDROID', 'WEB']).optional(),
+                deviceToken: joi.string().optional()
+            });
+            await validateSchema(schema, data);
+        }
+        catch (err) {
+            throw err;
+        }
+    },
+    validateCheckAdminExists: async (data) => {
+        try {
+            let schema = joi.object().keys({
+                _id: joi.any().optional(),
+                email: joi.string().trim().lowercase().optional(),
+                phone: joi
+                    .string()
+                    .regex(/^[0-9]+$/)
+                    .min(5)
+                    .optional(),
+                countryCode: joi
+                    .string()
+                    .regex(/^[0-9,+]+$/)
+                    .trim()
+                    .min(2)
+                    .optional()
+            });
+            await validateSchema(schema, data);
+        }
+        catch (err) {
+            throw err;
+        }
+    },
+    validateUpdateAdmin: async (data) => {
+        try {
+            let schema = joi.object().keys({
+                firstName: joi.string().min(3).max(50).optional(),
+                lastName: joi.string().min(3).max(50).optional(),
+                email: joi.string().trim().lowercase().optional(),
+                phone: joi
+                    .string()
+                    .regex(/^[0-9]+$/)
+                    .min(5)
+                    .optional(),
+                countryCode: joi
+                    .string()
+                    .regex(/^[0-9,+]+$/)
+                    .trim()
+                    .min(2)
+                    .optional(),
+                password: joi.string().min(3).max(50).optional(),
+                address: joi.string().min(3).max(50).optional(),
+                deviceType: joi.string().allow(...['IOS', 'ANDROID', 'WEB']).optional(),
+                deviceToken: joi.string().optional()
+            });
+            await validateSchema(schema, data);
+        }
+        catch (err) {
+            throw err;
+        }
+    },
+    validateCreateCLient: async (data) => {
+        try{
+        let schema = joi.object().keys({
+            name: joi.string().min(3).max(100).optional(),
+            description: joi.string().min(3).max(250).optional(),
+            logo: joi.string().min(3).max(50).optional(),
+            domain: joi.string().min(3).max(50).optional(),
+            email: joi.string().trim().lowercase().required(),
+            phone: joi
+                .string()
+                .regex(/^\d+$/)
+                .min(5)
+                .required(),
+            countryCode: joi
+                .string()
+                .regex(/^[0-9,+]+$/)
+                .trim()
+                .min(2)
+                .required(),
+            address: joi.string().min(3).max(150).required(),
+            lat: joi.string().min(3).max(50).optional(),
+            lng: joi.string().min(3).max(50).optional(),
+        });
+        await validateSchema(schema, data);
+    }catch(err)
+    {
+        throw err;
+    }
+
+    },
+    updateCreateCLient: async (data) => {
+        try{
+        let schema = joi.object().keys({
+            name: joi.string().min(3).max(100).optional(),
+            description: joi.string().min(3).max(250).optional(),
+            logo: joi.string().min(3).max(50).optional(),
+            domain: joi.string().min(3).max(50).optional(),
+            email: joi.string().trim().lowercase().optional(),
+            phone: joi
+                .string()
+                .regex(/^\d+$/)
+                .min(5)
+                .optional(),
+            countryCode: joi
+                .string()
+                .regex(/^[0-9,+]+$/)
+                .trim()
+                .min(2)
+                .optional(),
+            address: joi.string().min(3).max(150).optional(),
+            lat: joi.string().min(3).max(50).optional(),
+            lng: joi.string().min(3).max(50).optional(),
+        });
+        await validateSchema(schema, data);
+    }catch(err)
+    {
+        throw err;
+    }
+
+    }
+};

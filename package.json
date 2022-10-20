@@ -1,0 +1,25 @@
+{
+  "name": "pb-doc",
+  "version": "1.0.0",
+  "description": "documentation project of all product",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "pb",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "config": "^3.3.8",
+    "cors": "^2.8.5",
+    "express": "^4.18.1",
+    "gulp": "^4.0.2",
+    "joi": "^17.6.1",
+    "joi-to-swagger": "^6.1.1",
+    "jsonwebtoken": "^8.5.1",
+    "moment": "^2.29.4",
+    "mongoose": "^6.6.1",
+    "morgan": "^1.10.0",
+    "swagger-ui-express": "^4.5.0"
+  }
+}

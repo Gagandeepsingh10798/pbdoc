@@ -1,0 +1,12 @@
+{
+    "PORT": 3082,
+    "DB_URL": "mongodb://localhost:27017/pb-documentation",
+    "JWT_OPTIONS": {
+        "SECRET_KEY": "XXXXXXXXXXXXXXXXXXXXX",
+        "TOKEN_EXPIRES_IN": 900,
+        "REFRESH_TOKEN_EXPIRES_IN": 1800
+    },
+    "USER_TYPES": {
+        "ADMIN": "ADMIN"
+    }
+}

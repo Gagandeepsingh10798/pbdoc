@@ -1,0 +1,250 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "version": "1.0.0",
+    "title": "API Documentation",
+    "description": "This is a sample Pet Store Server based on the OpenAPI 3.0 specification.  You can find out more about\nSwagger at [https://swagger.io](https://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!\nYou can now help us improve the API whether it's by making changes to the definition itself or to the code.\nThat way, with time, we can improve the API in general, and expose some of the new features in OAS3.\n\n_If you're looking for the Swagger 2.0/OAS 2.0 version of Petstore, then click [here](https://editor.swagger.io/?url=https://petstore.swagger.io/v2/swagger.yaml). Alternatively, you can load via the `Edit > Load Petstore OAS 2.0` menu option!_\n\nSome useful links:\n- [The Pet Store repository](https://github.com/swagger-api/swagger-petstore)\n- [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)",
+    "termsOfService": "http://api_url/terms/",
+    "contact": {
+      "name": "PB-ADMIN",
+      "email": "Dummy@upfront.com",
+      "url": "https://xyz.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "servers": [
+    { "url": "http://localhost:3082/", "description": "LocalHost server" },
+    { "url": "http://api.fincogrp.com:3082/", "description": "Live server" }
+  ],
+  "tags": ["admin", "user"],
+  "paths": {
+    "/api/v1/idp/user-settings/{key}": {
+      "post": {
+        "tags": ["admin"],
+        "summary": "API to add User Account",
+        "description": "API to add User Account",
+        "operationId": "adminvalidateSignup",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "description": "KEY of ID",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 2,
+              "example": "gagan"
+            },
+            "example": "XXXXX-XXXXX-XXXXX"
+          }
+        ],
+        "responses": { "200": { "description": "Success Response" } }
+      }
+    },
+    "/api/v1/idp/oauth2-token": {
+      "post": {
+        "tags": ["admin"],
+        "summary": "API to add User Account",
+        "description": "API to add User Account",
+        "operationId": "adminvalidateSignup",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "name": "body",
+              "in": "body",
+              "description": "Body ",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "redirect_uri": { "type": "string" },
+                  "enableSms2FA": { "type": "boolean" },
+                  "grant_type": { "type": "string" },
+                  "widgetType": { "type": "string" },
+                  "widgetTypeId": { "type": "string" },
+                  "password": { "type": "string", "nullable": true },
+                  "client_id": { "type": "string" },
+                  "timeout_duration": {
+                    "type": "string",
+                    "pattern": "^[0-9]*$"
+                  },
+                  "username": { "type": "string" },
+                  "access_token_interval": { "type": "string" },
+                  "confirmed_new_login": { "type": "string" }
+                },
+                "required": [
+                  "client_id",
+                  "timeout_duration",
+                  "username",
+                  "access_token_interval"
+                ],
+                "additionalProperties": false
+              },
+              "example": {
+                "redirect_uri": "https://goodle.com",
+                "enableSms2FA": "true/false"
+              }
+            }
+          }
+        },
+        "responses": { "500": {} }
+      }
+    },
+    "/api/v1/idp/change-password-api": {
+      "post": {
+        "tags": ["admin"],
+        "summary": "API to Change User password",
+        "description": "API to Change User password",
+        "operationId": "adminvalidateSignup",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "name": "body",
+              "in": "body",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "emailAddress": {
+                    "type": "string",
+                    "pattern": "^([A-Za-z0-9_\\-\\.\\!\\#\\$\\%\\^\\&\\Z*\\(\\)\\{\\}\\|\\:\\;\\?\\><\\`\\~\\=\\+\\{\\}<\\>'\\''])+\\@(([A-Za-z0-9-])+\\.){1,20}([A-Za-z]{2,6})$"
+                  },
+                  "oldPassword": { "type": "string" },
+                  "passwordSettings": {
+                    "type": "object",
+                    "properties": {
+                      "numberOfPasswordTracked": {
+                        "type": "string",
+                        "pattern": "^[0-9]*$"
+                      },
+                      "maximumPasswordAgeEnforced": { "type": "boolean" },
+                      "minimumPasswordAgeEnforced": { "type": "boolean" },
+                      "maximumPasswordAgeDurationInDays": {
+                        "type": "string",
+                        "pattern": "^[0-9]*$"
+                      },
+                      "minimumPasswordAgeDurationInDays": {
+                        "type": "string",
+                        "pattern": "^[0-9]*$"
+                      }
+                    },
+                    "required": [
+                      "numberOfPasswordTracked",
+                      "maximumPasswordAgeEnforced",
+                      "minimumPasswordAgeEnforced",
+                      "maximumPasswordAgeDurationInDays",
+                      "minimumPasswordAgeDurationInDays"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "newPassword": { "type": "string" }
+                },
+                "required": ["emailAddress", "oldPassword", "newPassword"],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {}
+      }
+    },
+    "/api/v1/idp/reset-password-api": {
+      "post": {
+        "tags": ["admin"],
+        "summary": "API to Reset User password",
+        "description": "API to Reset User password",
+        "operationId": "adminvalidateSignup",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "name": "body",
+              "in": "body",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "emailAddress": {
+                    "type": "string",
+                    "pattern": "^([A-Za-z0-9_\\-\\.\\!\\#\\$\\%\\^\\&\\Z*\\(\\)\\{\\}\\|\\:\\;\\?\\><\\`\\~\\=\\+\\{\\}<\\>'\\''])+\\@(([A-Za-z0-9-])+\\.){1,20}([A-Za-z]{2,6})$"
+                  },
+                  "userName": { "type": "string" },
+                  "oneTimePassword": { "type": "string" }
+                },
+                "required": ["emailAddress", "userName", "oneTimePassword"],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {}
+      }
+    },
+    "/api/v1/idp/send-sms-2fa-otp-api/send-otp": {
+      "post": {
+        "tags": ["admin"],
+        "summary": "API to Send Otp",
+        "description": "API to Send Otp",
+        "operationId": "adminvalidateSignup",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "name": "body",
+              "in": "body",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userName": { "type": "string" },
+                  "toNumber": {
+                    "type": "string",
+                    "pattern": "^(\\+\\d{1,2}\\s)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}$"
+                  }
+                },
+                "required": ["userName", "toNumber"],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {}
+      }
+    },
+    "/api/v1/idp/ihealth-auth-api": {
+      "get": {
+        "tags": ["admin"],
+        "summary": "API to IHealth Auth",
+        "description": "API to IHealth Auth",
+        "operationId": "adminvalidateSignup",
+        "parameters": [
+          {
+            "in": "query",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": { "type": "string" },
+                "user_id": { "type": "string" }
+              },
+              "required": ["code", "user_id"],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "responses": {}
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "adminAuthorization": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header"
+      },
+      "userAuthorization": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header"
+      }
+    }
+  }
+}
