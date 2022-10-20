@@ -1,7 +1,7 @@
 const Gulp = require("gulp");
 const IDP_V1_DOC = require('./swagger-doc/v1/idp/joi-schemas');
 const fs = require('fs');
-
+const clients = require("./swagger-doc/v1/client/index");
 Gulp.task('build-doc:v1/idp', function () {
     const IDP_PATHS = {
 
@@ -52,6 +52,47 @@ Gulp.task('build-doc:v1/idp', function () {
     let IDP_SWAGGER = require('./swagger-doc/v1/idp/swagger.json');
     IDP_SWAGGER.paths = IDP_PATHS;
     fs.writeFile("./swagger-doc/v1/idp/swagger.json", JSON.stringify(IDP_SWAGGER), err => {
+        if (err) throw err;
+        console.log("Done writing"); // Success
+    });
+});
+
+
+Gulp.task('buildoc:v1/client',function(){
+    const CLIENT_PATHS = {
+
+    };
+    for (var i = 0; i < clients.length; i++) {
+        let route = clients[i].route;
+        CLIENT_PATHS[route] = {};
+        CLIENT_PATHS[route][`${clients[i].type}`] = {
+            "tags": clients[i].tags,
+            "summary": clients[i].summary,
+            "description": clients[i].description,
+           
+        };
+        if (clients[i].joi_schema.params) {
+            CLIENT_PATHS[route][`${clients[i].type}`].parameters = clients[i].joi_schema.params;
+        }
+        if(clients[i].joi_schema.headers)
+        {
+            CLIENT_PATHS[route][`${clients[i].type}`].parameters = clients[i].joi_schema.headers;   
+        }
+        if(clients[i].joi_schema.body){
+            CLIENT_PATHS[route][`${clients[i].type}`].requestBody = clients[i].joi_schema.body;
+
+        }
+        if (clients[i].joi_schema.query) {
+            CLIENT_PATHS[route][`${clients[i].type}`].parameters = clients[i].joi_schema.query;
+         
+        }
+        if (clients[i].responses) {
+            CLIENT_PATHS[route][`${clients[i].type}`].responses = clients[i].responses;
+        }
+    }
+    let CLIENT_SWAGGER = require('./swagger-doc/v1/swagger.json')
+    CLIENT_SWAGGER.paths = CLIENT_PATHS;
+    fs.writeFile("./swagger-doc/v1/client/swagger.json", JSON.stringify(CLIENT_SWAGGER), err => {
         if (err) throw err;
         console.log("Done writing"); // Success
     });

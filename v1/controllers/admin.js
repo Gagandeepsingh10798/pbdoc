@@ -1,4 +1,4 @@
-const { AdminDataManagement ,ClientDataManagement} = require('../data-management');
+const { AdminDataManagement ,ClientDataManagement,ModuleDataManagement} = require('../data-management');
 const universal = require('../../utils');
 const { CODES, MESSAGES } = require('../../constants');
 module.exports = {
@@ -115,9 +115,9 @@ module.exports = {
  
     getClient: async(req,res,next) => {
         try{
-          
+
             let ClientModel = new ClientDataManagement();
-            let client = await ClientModel.getClient();
+            let client = await ClientModel.getClient(req.query);
         
             await universal.response(res, CODES.OK, MESSAGES.admin.GETCLIENT_REGISTERED_SUCCESSFULLY,client);
         }
@@ -166,15 +166,69 @@ module.exports = {
     createModule: async(req,res,next) => {
         try{
 
-            let ModuleModel = new ClientDataManagement();
-            let module = await ClientModel.createClient(req.body);
+            let ModuleModel = new ModuleDataManagement();
+            let module = await ModuleModel.createModule(req.body);
         
-            await universal.response(res, CODES.OK, MESSAGES.admin.CLIENT_REGISTERED_SUCCESSFULLY,client);
+            await universal.response(res, CODES.OK, MESSAGES.admin.CLIENT_REGISTERED_SUCCESSFULLY,module);
         }
         catch(error){
             next(error);
         }
+    },
+ 
+    getModule: async(req,res,next) => {
+        try{
+          
+            let ModuleModel = new ModuleDataManagement();
+            let module = await ModuleModel.getModule();
+        
+            await universal.response(res, CODES.OK, MESSAGES.admin.GETCLIENT_REGISTERED_SUCCESSFULLY,module);
+        }
+        catch(error){
+            next(error);
+        }
+    },
+    getModulebyid:  async(req,res,next) => {
+        try{
+            let _id=req.params.id;
+            let ModuleModel = new ModuleDataManagement();
+            let module = await ModuleModel.getModulebyid(_id);
+        
+            await universal.response(res, CODES.OK, MESSAGES.admin.GETCLIENT_WITHID_SUCCESSFULLY,module);
+        }
+        catch(error){
+            next(error);
+        }
+    },
+    updateModule: async(req,res,next) => {
+        try{
+            let findId=req.params.id;
+            let ModuleModel = new ModuleDataManagement();
+            let module = await ModuleModel.updateModulebyid(findId,req.body);
+
+            await universal.response(res, CODES.OK, MESSAGES.admin.GETCLIENT_UPDATED_SUCCESSFULLY,module);
+
+
+        }catch(error){
+            next(error);
+        }
+    },
+    deleteModule:  async(req,res,next) => {
+        try{
+            let findId=req.params.id;
+            let ModuleModel = new ModuleDataManagement();
+            let module = await ModuleModel.deleteModulebyid(findId);
+
+            await universal.response(res, CODES.OK, MESSAGES.admin.CLIENT_DELETED_SUCCESSFULLY,module);
+
+
+        }catch(error){
+            next(error);
+        }
     }
+    
+
+
 
 
     

@@ -31,7 +31,7 @@ const ModulesModel = new Schema({
         trim: true,
         default: ''
     },
-    bfDesign: {
+    bfDiagram: {
         type: String,
         default: ''
     },
@@ -44,6 +44,6 @@ const ModulesModel = new Schema({
         default: false
     }
 
-})
+});
 const Modules =mongoose.model('Modules',ModulesModel);
 module.exports = Modules;

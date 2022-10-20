@@ -44,6 +44,8 @@ module.exports = {
   REQUEST_FETCHED_SUCCESSFULLY: "Request fetched successfully",
   REQUEST_UPDATED_SUCCESSFULLY: "Request updated successfully",
   EMAIL_ALREADY_ASSOCIATED_WITH_ANOTHER_ACCOUNT: "Email already associated with another account",
+  TITLE_ALREADY_ASSOCIATED_WITH_ANOTHER_ACCOUNT: "Title Already Exist With Another Module",
+  SUBHEADING_ALREADY_ASSOCIATED_WITH_ANOTHER_ACCOUNT: "SubHeading Already Exist With Another Module",
   PHONE_NUMBER_ALREADY_ASSOCIATED_WITH_ANOTHER_ACCOUNT: "Phone number already associated with another account",
   CUSTOMER_REGISTERED_SUCCESSFULLY: "Customer registered successfully",
   OTP_VERIFIED_SUCCESSFULLY: "Otp verified successfully",

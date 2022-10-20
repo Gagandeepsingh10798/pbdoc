@@ -15,14 +15,19 @@ router.get("/profile", validations.admin.isAdminValid, controllers.admin.getProf
 /*
 Client APIs
 */
-router.post('/client', validations.admin.validateCreateCLient,controllers.admin.createClient);
-router.get('/client',controllers.admin.getClient);
+router.post('/client',validations.admin.isAdminValid,validations.admin.validateCreateCLient,controllers.admin.createClient);
+router.get('/client',validations.admin.isAdminValid,controllers.admin.getClient);
 router.get('/client/:id',controllers.admin.getClientbyid);
-router.put('/client/:id',controllers.admin.updateClient);
+router.put('/client/:id',validations.admin.updateCreateCLient,controllers.admin.updateClient);
 router.delete('/client/:id',controllers.admin.deleteClient);
 
-router.post('./module',validations.admin.validateCreateModule,controllers.admin.createModule);
-
-
+/*
+Module APIs
+*/
+router.post('/module',validations.admin.validateCreateModule,controllers.admin.createModule);
+router.get('/module',controllers.admin.getModule);
+router.get('/module/:id',controllers.admin.getModulebyid);
+router.put('/module/:id',validations.admin.validateUpdateModule,controllers.admin.updateModule);
+router.delete('/module/:id',controllers.admin.deleteModule);
 
 module.exports = router;

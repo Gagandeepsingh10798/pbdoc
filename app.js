@@ -4,9 +4,12 @@ Import Required Modules
 const config = require('config');
 const http = require("http");
 const cors = require("cors");
-const mongoose = require('mongoose');
+ 
 const morgan = require('morgan');
 const express = require("express");
+const Models = require("./data-models");
+const mongoose = require('mongoose');
+const { MESSAGES } = require("./constants");
 const app = express();
 app.use(cors());
 
@@ -51,19 +54,36 @@ API Routes
 const route = require('./route');
 
 app.use('/api', route);
+
+/*
+Swagger setup
+*/
+app.use('/api-docs/client',swaggerUI.serve,swaggerUI.setup(swaggerDocument));
+
 /*
 Catch 404 Error
 */
 app.use(async (req, res, next) => {
+    
     res.status(404).send({ status: 404, message: "Invalid Route", data: {} });
+
 });
 /*
 Error Handler
 */
-app.use((err, req, res, next) => {
-    console.error(err);
+
+app.use(async (err, req, res, next) => {
+
+    
+    console.log(err);
+const LogsModel =  Models.logs;
+let error= await new LogsModel({message:err.stack}).save();
+console.log(error);
+// let find= await LogsModel.find();
+// console.log(find);
+ 
     if (err.message == "jwt expired" || err.message == "invalid signature" || err.message == "No Auth") err.status = 401;
     const status = err.status || 400;
-    if (typeof err == typeof "") { res.status(status).send({status: status, message: err.message || err || ""}); }
-    else res.status(status).send({ status: status, message: err.message || "" });
+    if (typeof err == typeof "") { res.status(status).send({status: status, message: err.message || err || ""});}
+    else res.status(status).send({ status: status, message: err.message || ""  });
 });

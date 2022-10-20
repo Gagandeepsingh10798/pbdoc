@@ -99,6 +99,35 @@ module.exports = {
         throw err;  
     }
     },
+    updateCreateCLient: async (req, res, next) => {
+        try{
+        let schema = joi.object().keys({
+            name: joi.string().min(3).max(100).optional(),
+            description: joi.string().min(3).max(250).optional(),
+            logo: joi.string().min(3).max(50).optional(),
+            domain: joi.string().min(3).max(50).optional(),
+            email: joi.string().trim().lowercase().optional(),
+            phone: joi
+                .string()
+                .regex(/^\d+$/)
+                .min(5)
+                .optional(),
+            countryCode: joi
+                .string()
+                .regex(/^[0-9,+]+$/)
+                .trim()
+                .min(2)
+                .optional(),
+            address: joi.string().min(3).max(150).optional(),
+            lat: joi.string().min(3).max(50).optional(),
+            lng: joi.string().min(3).max(50).optional(),
+        });
+        await validateSchema(schema, req.body, next);
+    }catch(err)
+    {
+        throw err;  
+    }
+    },
     isAdminValid: async (req, res, next) => {
         try {
             if (req.headers.authorization) {
@@ -122,7 +151,6 @@ module.exports = {
         let schema = joi.object().keys({
             title: joi.string().min(3).max(100).required(),
             description: joi.string().min(3).max(250).required(),
-            logo: joi.string().min(3).max(50).required(),
             heading: joi.string().min(3).max(50).required(),
             subHeading: joi.string().trim().lowercase().required(),
             businessDocument: joi
@@ -131,7 +159,32 @@ module.exports = {
             figmaLink: joi
                 .string()
                 .required(),
-            bfDiagram: joi.string().optional()
+            bfDiagram: joi.string().required(),
+            visFlow:joi.string().required()
+
+        });
+        await validateSchema(schema, req.body, next);
+    }catch(err)
+    {
+        throw err;  
+    }
+    },
+    validateUpdateModule: async (req, res, next) => {
+        try{
+        let schema = joi.object().keys({
+            title: joi.string().min(3).max(100).optional(),
+            description: joi.string().min(3).max(250).optional(),
+            heading: joi.string().min(3).max(50).optional(),
+            subHeading: joi.string().trim().lowercase().optional(),
+            businessDocument: joi
+                .string()
+                .optional(),
+            figmaLink: joi
+                .string()
+                .optional(),
+            bfDiagram: joi.string().optional(),
+            visFlow:joi.string().optional()
+           
         });
         await validateSchema(schema, req.body, next);
     }catch(err)
@@ -139,5 +192,7 @@ module.exports = {
         throw err;  
     }
     }
+   
+
 
 };

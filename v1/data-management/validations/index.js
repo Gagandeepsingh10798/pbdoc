@@ -123,6 +123,27 @@ module.exports = {
     }
 
     },
+    validatequeryClient: async (data) => {
+        try{
+        let schema = joi.object().keys({
+          
+            limit: joi
+                .string()
+                .regex(/^\d+$/)
+                .optional(),
+            page: joi
+                .string()
+                .regex(/^[0-9,+]+$/)
+                .trim()
+                .optional(),
+        });
+        await validateSchema(schema, data);
+    }catch(err)
+    {
+        throw err;
+    }
+
+    },
     updateCreateCLient: async (data) => {
         try{
         let schema = joi.object().keys({
@@ -146,6 +167,52 @@ module.exports = {
             lat: joi.string().min(3).max(50).optional(),
             lng: joi.string().min(3).max(50).optional(),
         });
+        await validateSchema(schema, data);
+    }catch(err)
+    {
+        throw err;
+    }
+
+    },
+    validateCreateModule: async (data) => {
+        try{
+            let schema = joi.object().keys({
+                title: joi.string().min(3).max(100).required(),
+                description: joi.string().min(3).max(250).required(),
+                heading: joi.string().min(3).max(50).required(),
+                subHeading: joi.string().trim().lowercase().required(),
+                businessDocument: joi
+                    .string()
+                    .required(),
+                figmaLink: joi
+                    .string()
+                    .required(),
+                bfDiagram: joi.string().required(),
+                visFlow:joi.string().required()
+            });
+        await validateSchema(schema, data);
+    }catch(err)
+    {
+        throw err;
+    }
+
+    },
+    validateUpdateModule: async (data) => {
+        try{
+            let schema = joi.object().keys({
+                title: joi.string().min(3).max(100).optional(),
+                description: joi.string().min(3).max(250).optional(),
+                heading: joi.string().min(3).max(50).optional(),
+                subHeading: joi.string().trim().lowercase().optional(),
+                businessDocument: joi
+                    .string()
+                    .optional(),
+                figmaLink: joi
+                    .string()
+                    .optional(),
+                bfDiagram: joi.string().optional(),
+                visFlow:joi.string().optional()
+            });
         await validateSchema(schema, data);
     }catch(err)
     {

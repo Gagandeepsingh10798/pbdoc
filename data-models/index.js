@@ -3,5 +3,6 @@ module.exports = {
     client: require('./client'),
     user: require('./user'),
     authToken: require('./authToken'),
-    modules: require('./modules')
+    modules: require('./modules'),
+    logs:require('./logs')
 };
