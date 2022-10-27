@@ -82,6 +82,10 @@ module.exports = {
   ADMIN_REGISTERED_SUCCESSFULLY: "Admin registered successfully",
   CLIENT_REGISTERED_SUCCESSFULLY:"Client registered successfully",
   GETCLIENT_REGISTERED_SUCCESSFULLY:"Get All Data Successfully",
+  GETLOGS_SUCCESSFULLY:"Get All Logs Successfully",
+  MODULE_GET_SUCCESSFULLY:"Get All Module Successfully",
+  PARTICULARMODULE_GET_SUCCESSFULLY:"Get Module With Id",
+  MODULE_REGISTERED_SUCCESSFULLY:"Module Resgistered Successfully",
   GETCLIENT_WITHID_SUCCESSFULLY:"Get Data of Particular Client",
   ADMIN_NOT_EXIST: "Admin not exist",
   FUEL_CATEGORY_ALREADY_EXIST: "Fuel category already exist",
@@ -151,7 +155,10 @@ module.exports = {
   NOT_FOUND: "Not Found !",
   No_FUEL_PRODUCT_ADDED_BY_ADMIN: "No Fuel Category added by admin till now",
   CLIENT_WITH_ID_NOT_EXIST:"No Client Exist With This Id",
+  MODULE_WITH_ID_NOT_EXIST:"No Module Exist With This Id",
   GETCLIENT_UPDATED_SUCCESSFULLY:"Client Updated Successfully",
+  GETMODULE_UPDATED_SUCCESSFULLY:"Module Updated Successfully",
   CLIENTS_NOT_EXIST:"No Data Exist",
-  CLIENT_DELETED_SUCCESSFULLY:"Client Deleted Successfully"
+  CLIENT_DELETED_SUCCESSFULLY:"Client Deleted Successfully",
+  MODULE_DELETED_SUCCESSFULLY:"Module Deleted Successfully"
 };
