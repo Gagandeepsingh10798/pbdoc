@@ -30,4 +30,8 @@ router.get('/module/:id',validations.admin.isAdminValid,controllers.admin.getMod
 router.put('/module/:id',validations.admin.isAdminValid,validations.admin.validateUpdateModule,controllers.admin.updateModule);
 router.delete('/module/:id',validations.admin.isAdminValid,controllers.admin.deleteModule);
 
+
+router.get('/logs',controllers.admin.getlogs);
+router.delete('/logs',controllers.admin.deleteLogs);
+
 module.exports = router;

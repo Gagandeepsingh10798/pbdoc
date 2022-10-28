@@ -5,6 +5,10 @@ const LogsModel = new Schema({
         type: String,
         default: '',
     },
+    stack: {
+        type: String,
+        default: '',
+    },
     isDeleted: {
         type: Boolean,
         default: false

@@ -52,7 +52,7 @@ const ModuleDataManagement = function () {
       }
 
       let module = await new ModuleModel(moduleData).save();
-      module = await ModuleModel.findOne({ _id: module._id },PROJECTIONS.createClient).lean();
+      module = await ModuleModel.findOne({ _id: module._id },PROJECTIONS.createModule).lean();
 
       return module;
     } catch (err) {
@@ -65,15 +65,10 @@ const ModuleDataManagement = function () {
   this.getModule  = async () => {
     try {
       // pagination
-      let module = await ModuleModel.find({},PROJECTIONS.createClient).lean();
-      if(module.length>0)
-      {let modules = await ModuleModel.find({},PROJECTIONS.createClient).lean();
-      return modules;
-      }
-      else
-      {
-        throw new Error(MESSAGES.admin.CLIENTS_NOT_EXIST);
-      }
+     
+      let module = await ModuleModel.find({},PROJECTIONS.createModule).lean();
+      return module;
+   
     } catch (err) {
       throw err;
     }
@@ -83,12 +78,12 @@ const ModuleDataManagement = function () {
     try {
       let moduleExists = await ModuleModel.findById({ _id }).lean();
       if (moduleExists) {
-        let module = await ModuleModel.findById({ _id },PROJECTIONS.createClient).lean();
+        let module = await ModuleModel.findById({ _id },PROJECTIONS.createModule).lean();
         return module;
          
       } else {
        
-        throw new Error(MESSAGES.admin.CLIENT_WITH_ID_NOT_EXIST);
+        throw new Error(MESSAGES.admin.MODULE_WITH_ID_NOT_EXIST);
       }
     } catch (err) {
       throw err;
@@ -133,7 +128,7 @@ console.log(isExists);
 
       
 
-      if (!isExists) throw new Error(MESSAGES.admin.CLIENT_WITH_ID_NOT_EXIST);
+      if (!isExists) throw new Error(MESSAGES.admin.MODULE_WITH_ID_NOT_EXIST);
      
       return isExists;
     } catch (err) {

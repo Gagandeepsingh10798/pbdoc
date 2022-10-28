@@ -83,6 +83,7 @@ module.exports = {
   CLIENT_REGISTERED_SUCCESSFULLY:"Client registered successfully",
   GETCLIENT_REGISTERED_SUCCESSFULLY:"Get All Data Successfully",
   GETLOGS_SUCCESSFULLY:"Get All Logs Successfully",
+  AUTHORIZATION_IS_MISSING:"AUTHORIZATION_IS_MISSING",
   MODULE_GET_SUCCESSFULLY:"Get All Module Successfully",
   PARTICULARMODULE_GET_SUCCESSFULLY:"Get Module With Id",
   MODULE_REGISTERED_SUCCESSFULLY:"Module Resgistered Successfully",

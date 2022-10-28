@@ -75,10 +75,11 @@ Error Handler
 */
 
 app.use(async (err, req, res, next) => {
+
     const LogsModel = Models.logs;
-    await new LogsModel({ message: err.stack }).save();
+    await new LogsModel({ message: err.message,stack:err.stack }).save();
     if (err.message == "jwt expired" || err.message == "invalid signature" || err.message == "No Auth") err.status = 401;
     const status = err.status || 400;
     if (typeof err == typeof "") { res.status(status).send({ status: status, message: err.message || err || "" }); }
-    else res.status(status).send({ status: status, message: err.message || "" });
+    else res.status(status).send({ status: status, message: err.message || err.stack });
 });

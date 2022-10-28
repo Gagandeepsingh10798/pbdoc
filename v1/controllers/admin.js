@@ -1,4 +1,4 @@
-const { AdminDataManagement ,ClientDataManagement,ModuleDataManagement} = require('../data-management');
+const { AdminDataManagement ,ClientDataManagement,ModuleDataManagement,LogsDataManagement} = require('../data-management');
 const universal = require('../../utils');
 const { CODES, MESSAGES } = require('../../constants');
 module.exports = {
@@ -169,7 +169,7 @@ module.exports = {
             let ModuleModel = new ModuleDataManagement();
             let module = await ModuleModel.createModule(req.body);
         
-            await universal.response(res, CODES.OK, MESSAGES.admin.CLIENT_REGISTERED_SUCCESSFULLY,module);
+            await universal.response(res, CODES.OK, MESSAGES.admin.MODULE_REGISTERED_SUCCESSFULLY,module);
         }
         catch(error){
             next(error);
@@ -182,7 +182,7 @@ module.exports = {
             let ModuleModel = new ModuleDataManagement();
             let module = await ModuleModel.getModule();
         
-            await universal.response(res, CODES.OK, MESSAGES.admin.GETCLIENT_REGISTERED_SUCCESSFULLY,module);
+            await universal.response(res, CODES.OK, MESSAGES.admin.MODULE_GET_SUCCESSFULLY,module);
         }
         catch(error){
             next(error);
@@ -194,7 +194,7 @@ module.exports = {
             let ModuleModel = new ModuleDataManagement();
             let module = await ModuleModel.getModulebyid(_id);
         
-            await universal.response(res, CODES.OK, MESSAGES.admin.GETCLIENT_WITHID_SUCCESSFULLY,module);
+            await universal.response(res, CODES.OK, MESSAGES.admin.PARTICULARMODULE_GET_SUCCESSFULLY,module);
         }
         catch(error){
             next(error);
@@ -206,7 +206,7 @@ module.exports = {
             let ModuleModel = new ModuleDataManagement();
             let module = await ModuleModel.updateModulebyid(findId,req.body);
 
-            await universal.response(res, CODES.OK, MESSAGES.admin.GETCLIENT_UPDATED_SUCCESSFULLY,module);
+            await universal.response(res, CODES.OK, MESSAGES.admin.GETMODULE_UPDATED_SUCCESSFULLY,module);
 
 
         }catch(error){
@@ -219,7 +219,32 @@ module.exports = {
             let ModuleModel = new ModuleDataManagement();
             let module = await ModuleModel.deleteModulebyid(findId);
 
-            await universal.response(res, CODES.OK, MESSAGES.admin.CLIENT_DELETED_SUCCESSFULLY,module);
+            await universal.response(res, CODES.OK, MESSAGES.admin.MODULE_DELETED_SUCCESSFULLY,module);
+
+
+        }catch(error){
+            next(error);
+        }
+    },
+    getlogs: async(req,res,next) => {
+        try{
+          
+            let LogsModel = new LogsDataManagement();
+            let logs = await LogsModel.getlogs();
+        
+            await universal.response(res, CODES.OK, MESSAGES.admin.GETLOGS_SUCCESSFULLY,logs);
+        }
+        catch(error){
+            next(error);
+        }
+    },
+    deleteLogs:  async(req,res,next) => {
+        try{
+            
+            let LogsModel = new LogsDataManagement();
+            let logs = await LogsModel.deletelogs();
+
+            await universal.response(res, CODES.OK, MESSAGES.admin.CLIENT_DELETED_SUCCESSFULLY,logs);
 
 
         }catch(error){
