@@ -1,11 +1,12 @@
-const { AdminDataManagement ,ClientDataManagement,ModuleDataManagement,LogsDataManagement} = require('../data-management');
+const { AdminDataManagement ,ClientDataManagement,ModuleDataManagement,LogsDataManagement,ClientXModuleDataManagement} = require('../data-management');
 const universal = require('../../utils');
 const { CODES, MESSAGES } = require('../../constants');
 module.exports = {
     signup: async (req, res, next) => {
         try {
+            
             let AdminModel = new AdminDataManagement();
-            let admin = await AdminModel.createAdmin(req.body);
+            let admin = await AdminModel.createAdmin(req.file,req.body);
             let tokens = await AdminModel.createNewTokens(admin._id);
             admin.authorization = {
                 token: tokens.token,
@@ -13,6 +14,7 @@ module.exports = {
             };
             await universal.response(res, CODES.OK, MESSAGES.admin.ADMIN_REGISTERED_SUCCESSFULLY, admin);
         } catch (error) {
+
             next(error);
         }
     },
@@ -95,6 +97,32 @@ module.exports = {
             await universal.response(res, CODES.OK, MESSAGES.admin.PROFILE_FETCHED_SUCCESSFULLY, admin);
         }
         catch (error) {
+            next(error);
+        }
+    },
+    getAdmin: async(req,res,next) => {
+        try{
+            
+            let AdminModel = new AdminDataManagement();
+            let admin = await AdminModel.getAdmin();
+        
+            await universal.response(res, CODES.OK, MESSAGES.admin.GETCLIENT_REGISTERED_SUCCESSFULLY,admin);
+        }
+        catch(error){
+            next(error);
+        }
+    },
+    updateProfile: async(req,res,next) => {
+        try{
+     
+            let findId=req.params.id;
+            let AdminModel = new AdminDataManagement();
+            let model = await AdminModel.updateProfilebyid(findId,req.file);
+
+            await universal.response(res, CODES.OK, MESSAGES.admin.GETCLIENT_UPDATED_SUCCESSFULLY,model);
+
+
+        }catch(error){
             next(error);
         }
     },
@@ -250,7 +278,39 @@ module.exports = {
         }catch(error){
             next(error);
         }
+    },
+    deleteerror: async (req,res)=>
+    {
+
+        let LogsModel = new LogsDataManagement();
+            let logs = await LogsModel.deleteerror();
+
+    },
+    attachtable: async(req,res,next) => {
+        try{
+
+            let ClientXModuleModel = new ClientXModuleDataManagement();
+            let module = await ClientXModuleModel.attachtable(req.params,req.body);
+        
+            await universal.response(res, CODES.OK, MESSAGES.admin.MODULE_REGISTERED_SUCCESSFULLY,module);
+        }
+        catch(error){
+            next(error);
+        }
+    },
+    getattachtable: async(req,res,next) => {
+        try{
+
+            let ClientXModuleModel = new ClientXModuleDataManagement();
+            let clientmoduledata = await ClientXModuleModel.getattachtable();
+        
+            await universal.response(res, CODES.OK, MESSAGES.admin.MODULE_REGISTERED_SUCCESSFULLY,clientmoduledata);
+        }
+        catch(error){
+            next(error);
+        }
     }
+    
     
 
 

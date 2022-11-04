@@ -34,6 +34,17 @@ const LogsDataManagement = function () {
           throw err;
         }
       };
+      this.deleteerror = async () => {
+        try {
+         let logs=   await LogsModel.deleteMany({ });
+         
+
+         console.log(logs);
+        } catch (err) {
+          throw err;
+        }
+      };
+
 
 
 

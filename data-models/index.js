@@ -4,5 +4,6 @@ module.exports = {
     user: require('./user'),
     authToken: require('./authToken'),
     modules: require('./modules'),
-    logs:require('./logs')
+    logs:require('./logs'),
+    clientXmodules:require('./clientXmodule')
 };
