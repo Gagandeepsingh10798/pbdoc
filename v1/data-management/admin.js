@@ -16,32 +16,25 @@ const AdminDataManagement = function () {
     const AuthTokenModel = Models.authToken;
     const OtpModel = Models.otp;
 
-    this.createAdmin = async (profile,adminData) => {
+    this.createAdmin = async (profile, adminData) => {
         try {
-
-           
-           
             await validations.validateCreateAdmin(adminData);
-            console.log(profile);
-            console.log(profile.path);
             const { email, phone, countryCode } = adminData;
             let userType = await config.get('USER_TYPES').ADMIN;
             let userExists = await AdminModel.findOne({ type: userType, email, isDeleted: false }).lean();
             if (userExists) {
                 await unlinkAsync(profile.path);
                 throw new Error(MESSAGES.admin.EMAIL_ALREADY_ASSOCIATED_WITH_ANOTHER_ACCOUNT);
-                
             }
             userExists = await AdminModel.findOne({ type: userType, phone, countryCode, isDeleted: false }).lean();
             if (userExists) {
                 await unlinkAsync(profile.path);
                 throw new Error(MESSAGES.admin.PHONE_NUMBER_ALREADY_ASSOCIATED_WITH_ANOTHER_ACCOUNT);
             }
-        
+
             adminData.type = userType;
-            adminData.profilePic=profile.path;
+            adminData.profilePic = profile.path;
             adminData.password = await universal.hashPasswordUsingBcrypt(adminData.password);
-            console.log(adminData);
             let admin = await new AdminModel(adminData).save();
             admin = await AdminModel.findOne({ _id: admin._id }, PROJECTIONS.createAdmin).lean();
             let authTokenPayload = {
@@ -77,7 +70,7 @@ const AdminDataManagement = function () {
             else if (phone && countryCode) {
                 isExists = await AdminModel.findOne({ type: userType, phone, countryCode, isDeleted: false }, Projection).lean();
             }
-           
+
 
             if (!isExists) throw new Error(MESSAGES.admin.ADMIN_NOT_EXIST);
             return isExists;
@@ -187,88 +180,85 @@ const AdminDataManagement = function () {
 
     this.getAdmin = async () => {
         try {
-              let admins = await AdminModel.find({}, PROJECTIONS.createAdmin).lean();
-              return admins;
-      
-        } catch (err) {
-          throw err;
-        }
-      };
+            let admins = await AdminModel.find({}, PROJECTIONS.createAdmin).lean();
+            return admins;
 
-      this.updateProfilebyid = async (findId, profile) => {
+        } catch (err) {
+            throw err;
+        }
+    };
+
+    this.updateProfilebyid = async (findId, profile) => {
         try {
-           
-         let updated={};
-    
-         updated.profilePic=profile.path;
-         const _id = findId;
-        //  await AdminModel.deleteMany({ });
-        if(profile)
-        {
-            let isExists = false;
-             isExists =  await AdminModel.findOne({
-                _id: ObjectId(_id),
-                isDeleted: false,
-              }).lean();
-              if(isExists)
-              {
-              const {profilePic}=isExists;
-            //   await unlinkAsync(profilePic);
-            await universal.deleteFilesd(profilePic);
-              }
-              else
-{
-    await universal.deleteFilesd(profile.path);
-}
-              
 
-        }
+            let updated = {};
 
-          let admin = await this.checkAdminsExists(findId);
-          await AdminModel.findOneAndUpdate(
-            { _id: ObjectId(admin._id) },
-            updated
-          );
-          admin = await AdminModel.findOne(
-            { _id: ObjectId(admin._id) },
-            PROJECTIONS.createClient
-          ).lean();
-          return admin;
+            updated.profilePic = profile.path;
+            const _id = findId;
+            //  await AdminModel.deleteMany({ });
+            if (profile) {
+                let isExists = false;
+                isExists = await AdminModel.findOne({
+                    _id: ObjectId(_id),
+                    isDeleted: false,
+                }).lean();
+                if (isExists) {
+                    const { profilePic } = isExists;
+                    //   await unlinkAsync(profilePic);
+                    await universal.deleteFilesd(profilePic);
+                }
+                else {
+                    await universal.deleteFilesd(profile.path);
+                }
+
+
+            }
+
+            let admin = await this.checkAdminsExists(findId);
+            await AdminModel.findOneAndUpdate(
+                { _id: ObjectId(admin._id) },
+                updated
+            );
+            admin = await AdminModel.findOne(
+                { _id: ObjectId(admin._id) },
+                PROJECTIONS.createClient
+            ).lean();
+            return admin;
         } catch (err) {
-          throw err;
+            throw err;
         }
-      };
+    };
 
 
-  this.checkAdminsExists = async (findId) => {
-    try {
-      let isExists = false;
+    this.checkAdminsExists = async (findId) => {
+        try {
+            let isExists = false;
 
-      const _id = findId;
+            const _id = findId;
 
-      if (_id) {
-        isExists = await AdminModel.findOne({
-          _id: ObjectId(_id),
-          isDeleted: false,
-        }).lean();
-        console.log(isExists);
-        
-      }
+            if (_id) {
+                isExists = await AdminModel.findOne({
+                    _id: ObjectId(_id),
+                    isDeleted: false,
+                }).lean();
+                console.log(isExists);
 
-      console.log(isExists);
+            }
 
-      if (!isExists) throw new Error(MESSAGES.admin.CLIENT_WITH_ID_NOT_EXIST);
+            console.log(isExists);
 
-      return isExists;
-    } catch (err) {
-      throw err;
-    }
-  };
+            if (!isExists) throw new Error(MESSAGES.admin.CLIENT_WITH_ID_NOT_EXIST);
+
+            return isExists;
+        } catch (err) {
+            throw err;
+        }
+    };
 
 
-      
 
-      
+
+
 
 };
 

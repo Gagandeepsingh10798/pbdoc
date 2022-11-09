@@ -6,15 +6,14 @@ const http = require("http");
 const cors = require("cors");
 const morgan = require('morgan');
 const express = require("express");
-const path=require("path");
+const path = require("path");
 const Models = require("./data-models");
 const mongoose = require('mongoose');
 const swaggerUI = require('swagger-ui-express');
-const controllers = require('./v1/controllers');
-const { MESSAGES } = require("./constants");
-var cron = require('node-cron');
 const swaggerDocument = require('./swagger-doc/v1/client/swagger.json');
-
+const controllers = require('./v1/controllers');
+const cron = require('node-cron');
+const route = require('./route');
 const app = express();
 app.use(cors());
 
@@ -53,25 +52,15 @@ Test API
 app.use('/test', async (req, res, next) => {
     res.status(200).send({ status: 200, message: "TEST API", data: {} });
 });
+
 /*
 API Routes
 */
-const route = require('./route');
-
 app.use('/api', route);
 
 /*
 Swagger setup
 */
-
-
-const task=cron.schedule('0 * * * *', async () => {
-    controllers.admin.deleteerror();
-});
-
-task.start();
-
-
 app.use('/api-docs/client', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 app.use('/uploads', express.static(path.join(__dirname, 'public')));
 
@@ -79,22 +68,25 @@ app.use('/uploads', express.static(path.join(__dirname, 'public')));
 Catch 404 Error
 */
 app.use(async (req, res, next) => {
-
-    
-
     res.status(404).send({ status: 404, message: "Invalid Route", data: {} });
-
 });
+
 /*
 Error Handler
 */
-
 app.use(async (err, req, res, next) => {
-
     const LogsModel = Models.logs;
-    await new LogsModel({ message: err.message,stack:err.stack }).save();
+    await new LogsModel({ message: err.message, stack: err.stack }).save();
     if (err.message == "jwt expired" || err.message == "invalid signature" || err.message == "No Auth") err.status = 401;
     const status = err.status || 400;
     if (typeof err == typeof "") { res.status(status).send({ status: status, message: err.message || err || "" }); }
     else res.status(status).send({ status: status, message: err.message || err.stack });
 });
+
+/*
+Cron Tasks
+*/
+const clearLogs = cron.schedule('0 * * * *', async () => {
+    controllers.admin.clearLogs();
+});
+clearLogs.start();

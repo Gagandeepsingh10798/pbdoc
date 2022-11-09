@@ -4,11 +4,11 @@ const Schema = mongoose.Schema;
 const ClientXModuleModel = new Schema({
     clientId: {
         type: ObjectId,
-        ref: 'client',
+        ref: 'clients',
     },
     moduleId: {
         type: ObjectId,
-        ref: 'module'
+        ref: 'modules'
     },
     isDeleted: {
         type: Boolean,
@@ -16,5 +16,5 @@ const ClientXModuleModel = new Schema({
     }
 
 });
-const ClientXModule =mongoose.model('ClientXModule',ClientXModuleModel);
+const ClientXModule = mongoose.model('ClientXModule', ClientXModuleModel);
 module.exports = ClientXModule;

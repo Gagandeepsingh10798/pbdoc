@@ -7,6 +7,10 @@
         "REFRESH_TOKEN_EXPIRES_IN": 3600
     },
     "USER_TYPES": {
-        "ADMIN": "ADMIN"
+        "ADMIN": "ADMIN",
+        "SUB_ADMIN": "SUB_ADMIN",
+        "CLIENT": "CLIENT",
+        "DEVELOPER": "DEVELOPER",
+        "TESTER": "TESTER"
     }
 }
