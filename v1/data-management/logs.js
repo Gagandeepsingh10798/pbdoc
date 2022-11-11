@@ -10,30 +10,39 @@ const moment = require("moment");
 const LogsDataManagement = function () {
 
 
-    const LogsModel = Models.logs;
-    
-    this.getlogs  = async () => {
-        try {
-          
-              let logs = await LogsModel.find({},PROJECTIONS.createClient).lean();
-          return logs;
-          
-         
-        } catch (err) {
-          throw err;
-        }
-      };
+  const LogsModel = Models.logs;
 
-      this.deletelogs = async () => {
-        try {
-         let logs=   await LogsModel.deleteMany({ });
-         
+  this.getlogs = async () => {
+    try {
 
-          return logs;
-        } catch (err) {
-          throw err;
-        }
-      };
+      let logs = await LogsModel.find({}, PROJECTIONS.createClient).lean();
+      return logs;
+
+
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  this.deletelogs = async () => {
+    try {
+      let logs = await LogsModel.deleteMany({});
+
+
+      return logs;
+    } catch (err) {
+      throw err;
+    }
+  };
+  this.clearLogs = async () => {
+    try {
+      await LogsModel.deleteMany({});
+      return;
+    } catch (err) {
+      throw err;
+    }
+  };
+
 
 
 

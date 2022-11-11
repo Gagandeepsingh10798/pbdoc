@@ -5,7 +5,8 @@ const ClientModel = new Schema({
         type: String,
         default: "",
         lowercase: true,
-        trim: true
+        trim: true,
+        ref: 'clients'
     },
     description: {
         type: String,

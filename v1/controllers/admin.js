@@ -1,11 +1,11 @@
-const { AdminDataManagement ,ClientDataManagement,ModuleDataManagement,LogsDataManagement} = require('../data-management');
+const { AdminDataManagement, ClientDataManagement, ModuleDataManagement, LogsDataManagement, ClientXModuleDataManagement } = require('../data-management');
 const universal = require('../../utils');
 const { CODES, MESSAGES } = require('../../constants');
 module.exports = {
     signup: async (req, res, next) => {
         try {
             let AdminModel = new AdminDataManagement();
-            let admin = await AdminModel.createAdmin(req.body);
+            let admin = await AdminModel.createAdmin(req.file, req.body);
             let tokens = await AdminModel.createNewTokens(admin._id);
             admin.authorization = {
                 token: tokens.token,
@@ -13,6 +13,7 @@ module.exports = {
             };
             await universal.response(res, CODES.OK, MESSAGES.admin.ADMIN_REGISTERED_SUCCESSFULLY, admin);
         } catch (error) {
+
             next(error);
         }
     },
@@ -87,7 +88,7 @@ module.exports = {
             next(error);
         }
     },
-    
+
     getProfile: async (req, res, next) => {
         try {
             let AdminModel = new AdminDataManagement();
@@ -98,162 +99,219 @@ module.exports = {
             next(error);
         }
     },
-    /* Client APIs */
-    createClient: async(req,res,next) => {
-        try{
-            let ClientModel = new ClientDataManagement();
-            let client = await ClientModel.createClient(req.body);
-            await universal.response(res, CODES.OK, MESSAGES.admin.CLIENT_REGISTERED_SUCCESSFULLY,client);
+    getAdmin: async (req, res, next) => {
+        try {
+
+            let AdminModel = new AdminDataManagement();
+            let admin = await AdminModel.getAdmin();
+
+            await universal.response(res, CODES.OK, MESSAGES.admin.GETCLIENT_REGISTERED_SUCCESSFULLY, admin);
         }
-        catch(error){
+        catch (error) {
             next(error);
         }
     },
-  
- 
-    getClient: async(req,res,next) => {
-        try{
+    updateProfile: async (req, res, next) => {
+        try {
+
+            let findId = req.params.id;
+            let AdminModel = new AdminDataManagement();
+            let model = await AdminModel.updateProfilebyid(findId, req.file);
+
+            await universal.response(res, CODES.OK, MESSAGES.admin.GETCLIENT_UPDATED_SUCCESSFULLY, model);
+
+
+        } catch (error) {
+            next(error);
+        }
+    },
+    /* Client APIs */
+    createClient: async (req, res, next) => {
+        try {
+            let ClientModel = new ClientDataManagement();
+            let client = await ClientModel.createClient(req.body);
+
+            await universal.response(res, CODES.OK, MESSAGES.admin.CLIENT_REGISTERED_SUCCESSFULLY, client);
+        }
+        catch (error) {
+            next(error);
+        }
+    },
+
+
+    getClient: async (req, res, next) => {
+        try {
 
             let ClientModel = new ClientDataManagement();
             let client = await ClientModel.getClient(req.query);
-        
-            await universal.response(res, CODES.OK, MESSAGES.admin.GETCLIENT_REGISTERED_SUCCESSFULLY,client);
+
+            await universal.response(res, CODES.OK, MESSAGES.admin.GETCLIENT_REGISTERED_SUCCESSFULLY, client);
         }
-        catch(error){
+        catch (error) {
             next(error);
         }
     },
-    getClientbyid:  async(req,res,next) => {
-        try{
-            let _id=req.params.id;
+    getClientbyid: async (req, res, next) => {
+        try {
+            let _id = req.params.id;
             let ClientModel = new ClientDataManagement();
             let client = await ClientModel.getClientbyid(_id);
-        
-            await universal.response(res, CODES.OK, MESSAGES.admin.GETCLIENT_WITHID_SUCCESSFULLY,client);
+
+            await universal.response(res, CODES.OK, MESSAGES.admin.GETCLIENT_WITHID_SUCCESSFULLY, client);
         }
-        catch(error){
+        catch (error) {
             next(error);
         }
     },
-    updateClient: async(req,res,next) => {
-        try{
-            let findId=req.params.id;
+    updateClient: async (req, res, next) => {
+        try {
+            let findId = req.params.id;
             let ClientModel = new ClientDataManagement();
-            let client = await ClientModel.updateClientbyid(findId,req.body);
+            let client = await ClientModel.updateClientbyid(findId, req.body);
 
-            await universal.response(res, CODES.OK, MESSAGES.admin.GETCLIENT_UPDATED_SUCCESSFULLY,client);
+            await universal.response(res, CODES.OK, MESSAGES.admin.GETCLIENT_UPDATED_SUCCESSFULLY, client);
 
 
-        }catch(error){
+        } catch (error) {
             next(error);
         }
     },
-    deleteClient:  async(req,res,next) => {
-        try{
-            let findId=req.params.id;
+    deleteClient: async (req, res, next) => {
+        try {
+            let findId = req.params.id;
             let ClientModel = new ClientDataManagement();
             let client = await ClientModel.deleteClientbyid(findId);
 
-            await universal.response(res, CODES.OK, MESSAGES.admin.CLIENT_DELETED_SUCCESSFULLY,client);
+            await universal.response(res, CODES.OK, MESSAGES.admin.CLIENT_DELETED_SUCCESSFULLY, client);
 
 
-        }catch(error){
+        } catch (error) {
             next(error);
         }
     },
-    createModule: async(req,res,next) => {
-        try{
+    createModule: async (req, res, next) => {
+        try {
 
             let ModuleModel = new ModuleDataManagement();
             let module = await ModuleModel.createModule(req.body);
-        
-            await universal.response(res, CODES.OK, MESSAGES.admin.MODULE_REGISTERED_SUCCESSFULLY,module);
+
+            await universal.response(res, CODES.OK, MESSAGES.admin.MODULE_REGISTERED_SUCCESSFULLY, module);
         }
-        catch(error){
+        catch (error) {
             next(error);
         }
     },
- 
-    getModule: async(req,res,next) => {
-        try{
-          
+
+    getModule: async (req, res, next) => {
+        try {
+
             let ModuleModel = new ModuleDataManagement();
             let module = await ModuleModel.getModule();
-        
-            await universal.response(res, CODES.OK, MESSAGES.admin.MODULE_GET_SUCCESSFULLY,module);
+
+            await universal.response(res, CODES.OK, MESSAGES.admin.MODULE_GET_SUCCESSFULLY, module);
         }
-        catch(error){
+        catch (error) {
             next(error);
         }
     },
-    getModulebyid:  async(req,res,next) => {
-        try{
-            let _id=req.params.id;
+    getModulebyid: async (req, res, next) => {
+        try {
+            let _id = req.params.id;
             let ModuleModel = new ModuleDataManagement();
             let module = await ModuleModel.getModulebyid(_id);
-        
-            await universal.response(res, CODES.OK, MESSAGES.admin.PARTICULARMODULE_GET_SUCCESSFULLY,module);
+
+            await universal.response(res, CODES.OK, MESSAGES.admin.PARTICULARMODULE_GET_SUCCESSFULLY, module);
         }
-        catch(error){
+        catch (error) {
             next(error);
         }
     },
-    updateModule: async(req,res,next) => {
-        try{
-            let findId=req.params.id;
+    updateModule: async (req, res, next) => {
+        try {
+            let findId = req.params.id;
             let ModuleModel = new ModuleDataManagement();
-            let module = await ModuleModel.updateModulebyid(findId,req.body);
+            let module = await ModuleModel.updateModulebyid(findId, req.body);
 
-            await universal.response(res, CODES.OK, MESSAGES.admin.GETMODULE_UPDATED_SUCCESSFULLY,module);
+            await universal.response(res, CODES.OK, MESSAGES.admin.GETMODULE_UPDATED_SUCCESSFULLY, module);
 
 
-        }catch(error){
+        } catch (error) {
             next(error);
         }
     },
-    deleteModule:  async(req,res,next) => {
-        try{
-            let findId=req.params.id;
+    deleteModule: async (req, res, next) => {
+        try {
+            let findId = req.params.id;
             let ModuleModel = new ModuleDataManagement();
             let module = await ModuleModel.deleteModulebyid(findId);
 
-            await universal.response(res, CODES.OK, MESSAGES.admin.MODULE_DELETED_SUCCESSFULLY,module);
+            await universal.response(res, CODES.OK, MESSAGES.admin.MODULE_DELETED_SUCCESSFULLY, module);
 
 
-        }catch(error){
+        } catch (error) {
             next(error);
         }
     },
-    getlogs: async(req,res,next) => {
-        try{
-          
+    getlogs: async (req, res, next) => {
+        try {
+
             let LogsModel = new LogsDataManagement();
             let logs = await LogsModel.getlogs();
-        
-            await universal.response(res, CODES.OK, MESSAGES.admin.GETLOGS_SUCCESSFULLY,logs);
+
+            await universal.response(res, CODES.OK, MESSAGES.admin.GETLOGS_SUCCESSFULLY, logs);
         }
-        catch(error){
+        catch (error) {
             next(error);
         }
     },
-    deleteLogs:  async(req,res,next) => {
-        try{
-            
+    deleteLogs: async (req, res, next) => {
+        try {
+
             let LogsModel = new LogsDataManagement();
             let logs = await LogsModel.deletelogs();
 
-            await universal.response(res, CODES.OK, MESSAGES.admin.CLIENT_DELETED_SUCCESSFULLY,logs);
+            await universal.response(res, CODES.OK, MESSAGES.admin.CLIENT_DELETED_SUCCESSFULLY, logs);
 
 
-        }catch(error){
+        } catch (error) {
+            next(error);
+        }
+    },
+    clearLogs: async () => {
+        const LogsModel = new LogsDataManagement();
+        await LogsModel.clearLogs();
+        return;
+    },
+    attachtable: async (req, res, next) => {
+        try {
+
+            let ClientXModuleModel = new ClientXModuleDataManagement();
+            let module = await ClientXModuleModel.attachtable(req.params, req.body);
+
+            await universal.response(res, CODES.OK, MESSAGES.admin.MODULE_REGISTERED_SUCCESSFULLY, module);
+        }
+        catch (error) {
+            next(error);
+        }
+    },
+    getattachtable: async (req, res, next) => {
+        try {
+
+            let ClientXModuleModel = new ClientXModuleDataManagement();
+            let clientmoduledata = await ClientXModuleModel.getattachtable();
+
+            await universal.response(res, CODES.OK, MESSAGES.admin.MODULE_REGISTERED_SUCCESSFULLY, clientmoduledata);
+        }
+        catch (error) {
             next(error);
         }
     }
-    
 
 
 
 
-    
+
+
+
 
 };

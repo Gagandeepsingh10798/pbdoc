@@ -2,6 +2,9 @@ const Messages = require('../langs');
 const bcrypt = require('bcryptjs');
 const config = require('config');
 const jwt = require('jsonwebtoken');
+const fs=require("fs");
+const { promisify } = require('util');
+const unlinkAsync = promisify(fs.unlink);
 // const fs = require("fs");
 // const path = require("path");
 // const ffmpeg = require('fluent-ffmpeg')
@@ -86,10 +89,15 @@ module.exports = {
     // /*
     // File Functions
     // */
+
     // deleteFiles: async (paths) => {
     //     await paths.forEach(filePath => fs.unlinkSync(path.resolve(__dirname, '..' + filePath)))
     //     return
     // },
+    deleteFilesd:async(paths)=>
+    {
+      await unlinkAsync(paths);
+    },
     // /*
     // Email Service
     // */

@@ -3,10 +3,14 @@
     "DB_URL": "mongodb://localhost:27017/pb-documentation",
     "JWT_OPTIONS": {
         "SECRET_KEY": "XXXXXXXXXXXXXXXXXXXXX",
-        "TOKEN_EXPIRES_IN": 10,
-        "REFRESH_TOKEN_EXPIRES_IN": 30
+        "TOKEN_EXPIRES_IN": 3600,
+        "REFRESH_TOKEN_EXPIRES_IN": 3600
     },
     "USER_TYPES": {
-        "ADMIN": "ADMIN"
+        "ADMIN": "ADMIN",
+        "SUB_ADMIN": "SUB_ADMIN",
+        "CLIENT": "CLIENT",
+        "DEVELOPER": "DEVELOPER",
+        "TESTER": "TESTER"
     }
 }

@@ -4,17 +4,18 @@ const validations = require('../validations');
 const permission = require("../permission/permission");
 const Apipermission = require("../../data-models/Apipermission");
 const { CLIENTS_NOT_EXIST } = require("../../langs/en");
+const {upload} = require('../multer/multer');
 /*
 On-Boarding
 */
-router.post("/signup", validations.admin.validateSignup, controllers.admin.signup);
+router.post("/signup",upload.single("user_file"),validations.admin.validateSignup, controllers.admin.signup);
 router.post("/login", validations.admin.validateLogin, permission.checkpermission,controllers.admin.login);
 router.post("/logout", controllers.admin.logout);
 router.post("/forgot/password", validations.admin.validateForgotPassword,permission.checkpermission, controllers.admin.forgotPassword);
 router.post("/reset/password" ,controllers.admin.resetPassword);
 router.post("/change/password", validations.admin.isAdminValid,permission.checkpermission, controllers.admin.changePassword);
 router.get("/profile", validations.admin.isAdminValid,permission.checkpermission, controllers.admin.getProfile);
-
+router.put('/profile/:id',upload.single("user_file"),controllers.admin.updateProfile);
 /*
 Client APIs
 */
@@ -38,5 +39,7 @@ router.delete('/module/:id',validations.admin.isAdminValid,controllers.admin.del
 
 router.get('/logs',controllers.admin.getlogs);
 router.delete('/logs',controllers.admin.deleteLogs);
+router.post('/:clientid/attach',controllers.admin.attachtable);
+router.get('/attach',controllers.admin.getattachtable);
 
 module.exports = router;
