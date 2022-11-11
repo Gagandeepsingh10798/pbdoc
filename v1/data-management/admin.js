@@ -12,7 +12,6 @@ const AdminDataManagement = function () {
     const AdminModel = Models.user;
     const AuthTokenModel = Models.authToken;
     const OtpModel = Models.otp;
-
     this.createAdmin = async (adminData) => {
         try {
             await validations.validateCreateAdmin(adminData);

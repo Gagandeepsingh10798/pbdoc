@@ -1,0 +1,234 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "version": "1.0.0",
+        "title": "API Documentation",
+        "description": "This is a sample Pet Store Server based on the OpenAPI 3.0 specification.  You can find out more about\nSwagger at [https://swagger.io](https://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!\nYou can now help us improve the API whether it's by making changes to the definition itself or to the code.\nThat way, with time, we can improve the API in general, and expose some of the new features in OAS3.\n\n_If you're looking for the Swagger 2.0/OAS 2.0 version of Petstore, then click [here](https://editor.swagger.io/?url=https://petstore.swagger.io/v2/swagger.yaml). Alternatively, you can load via the `Edit > Load Petstore OAS 2.0` menu option!_\n\nSome useful links:\n- [The Pet Store repository](https://github.com/swagger-api/swagger-petstore)\n- [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)",
+        "termsOfService": "http://api_url/terms/",
+        "contact": {
+            "name": "PB-ADMIN",
+            "email": "Dummy@upfront.com",
+            "url": "https://xyz.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "servers": [
+        {
+            "url": "http://localhost:3082/",
+            "description": "LocalHost server"
+        },
+        {
+            "url": "http://api.fincogrp.com:3082/",
+            "description": "Live server"
+        }
+    ],
+    "tags": [
+        "admin",
+        "user"
+    ],
+    "paths": {
+        "/api/v1/document/module": {
+            "post": {
+                "tags": [
+                    "module"
+                ],
+                "summary": "API to create module",
+                "description": "API to create module",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "name": "body",
+                            "in": "body",
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "maxLength": 100
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "maxLength": 250
+                                    },
+                                    "heading": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "maxLength": 50
+                                    },
+                                    "subHeading": {
+                                        "type": "string"
+                                    },
+                                    "businessDocument": {
+                                        "type": "string"
+                                    },
+                                    "figmaLink": {
+                                        "type": "string"
+                                    },
+                                    "bfDiagram": {
+                                        "type": "string"
+                                    },
+                                    "visFlow": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "title",
+                                    "description",
+                                    "heading",
+                                    "subHeading",
+                                    "businessDocument",
+                                    "figmaLink",
+                                    "bfDiagram",
+                                    "visFlow"
+                                ],
+                                "additionalProperties": false
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "module"
+                ],
+                "summary": "API to get module",
+                "description": "API to get module"
+            }
+        },
+        "/api/v1/document/module/{id}": {
+            "get": {
+                "tags": [
+                    "module"
+                ],
+                "summary": "API to get module by id",
+                "description": "API to get module by id",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "KEY of ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "minLength": 2,
+                            "maxLength": 2
+                        }
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "module"
+                ],
+                "summary": "API to update module by id",
+                "description": "API to update module by id",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "KEY of ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "minLength": 2,
+                            "maxLength": 2
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "name": "body",
+                            "in": "body",
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "maxLength": 100
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "maxLength": 250
+                                    },
+                                    "heading": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "maxLength": 50
+                                    },
+                                    "subHeading": {
+                                        "type": "string"
+                                    },
+                                    "businessDocument": {
+                                        "type": "string"
+                                    },
+                                    "figmaLink": {
+                                        "type": "string"
+                                    },
+                                    "bfDiagram": {
+                                        "type": "string"
+                                    },
+                                    "visFlow": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "title",
+                                    "description",
+                                    "heading",
+                                    "subHeading",
+                                    "businessDocument",
+                                    "figmaLink",
+                                    "bfDiagram",
+                                    "visFlow"
+                                ],
+                                "additionalProperties": false
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "module"
+                ],
+                "summary": "API to delete module by id",
+                "description": "API to delete module by id",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "KEY of ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "minLength": 2,
+                            "maxLength": 2
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "adminAuthorization": {
+                "type": "apiKey",
+                "name": "Authorization",
+                "in": "header"
+            },
+            "userAuthorization": {
+                "type": "apiKey",
+                "name": "Authorization",
+                "in": "header"
+            }
+        }
+    }
+}

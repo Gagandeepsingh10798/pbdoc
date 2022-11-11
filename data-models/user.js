@@ -42,7 +42,7 @@ const UserModel = new Schema({
     },
     type: {
         type: String,
-        enum: ['ADMIN']
+        enum: ['ADMIN','CLIENT']
     },
     deviceType: {
         type: String,

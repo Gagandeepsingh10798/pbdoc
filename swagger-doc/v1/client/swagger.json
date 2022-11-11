@@ -1,210 +1,419 @@
 {
-  "openapi": "3.0.3",
-  "info": {
-    "version": "1.0.0",
-    "title": "API Documentation",
-    "description": "This is a sample Pet Store Server based on the OpenAPI 3.0 specification.  You can find out more about\nSwagger at [https://swagger.io](https://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!\nYou can now help us improve the API whether it's by making changes to the definition itself or to the code.\nThat way, with time, we can improve the API in general, and expose some of the new features in OAS3.\n\n_If you're looking for the Swagger 2.0/OAS 2.0 version of Petstore, then click [here](https://editor.swagger.io/?url=https://petstore.swagger.io/v2/swagger.yaml). Alternatively, you can load via the `Edit > Load Petstore OAS 2.0` menu option!_\n\nSome useful links:\n- [The Pet Store repository](https://github.com/swagger-api/swagger-petstore)\n- [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)",
-    "termsOfService": "http://api_url/terms/",
-    "contact": {
-      "name": "PB-ADMIN",
-      "email": "Dummy@upfront.com",
-      "url": "https://xyz.com"
-    },
-    "license": {
-      "name": "Apache 2.0",
-      "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
-    }
-  },
-  "servers": [
-    { "url": "http://localhost:3082/", "description": "LocalHost server" },
-    { "url": "http://api.fincogrp.com:3082/", "description": "Live server" }
-  ],
-  "tags": ["admin", "user"],
-  "paths": {
-    "/api/v1/document/client/{id}": {
-      "put": {
-        "tags": ["client"],
-        "summary": "API to update client by id",
-        "description": "API to update client by id",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "KEY of ID",
-            "required": true,
-            "schema": { "type": "string", "minLength": 2, "maxLength": 2 }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "name": "body",
-              "in": "body",
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "minLength": 3,
-                    "maxLength": 100
-                  },
-                  "description": {
-                    "type": "string",
-                    "minLength": 3,
-                    "maxLength": 250
-                  },
-                  "logo": { "type": "string", "minLength": 3, "maxLength": 50 },
-                  "domain": {
-                    "type": "string",
-                    "minLength": 3,
-                    "maxLength": 50
-                  },
-                  "email": { "type": "string" },
-                  "phone": {
-                    "type": "string",
-                    "pattern": "^\\d+$",
-                    "minLength": 5
-                  },
-                  "countryCode": {
-                    "type": "string",
-                    "pattern": "^[0-9,+]+$",
-                    "minLength": 2
-                  },
-                  "address": {
-                    "type": "string",
-                    "minLength": 3,
-                    "maxLength": 150
-                  },
-                  "lat": { "type": "string", "minLength": 3, "maxLength": 50 },
-                  "lng": { "type": "string", "minLength": 3, "maxLength": 50 }
-                },
-                "required": [
-                  "name",
-                  "description",
-                  "logo",
-                  "domain",
-                  "email",
-                  "phone",
-                  "countryCode",
-                  "address",
-                  "lat",
-                  "lng"
-                ],
-                "additionalProperties": false
-              }
-            }
-          }
+    "openapi": "3.0.3",
+    "info": {
+        "version": "1.0.0",
+        "title": "API Documentation",
+        "description": "This is a sample Pet Store Server based on the OpenAPI 3.0 specification.  You can find out more about\nSwagger at [https://swagger.io](https://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!\nYou can now help us improve the API whether it's by making changes to the definition itself or to the code.\nThat way, with time, we can improve the API in general, and expose some of the new features in OAS3.\n\n_If you're looking for the Swagger 2.0/OAS 2.0 version of Petstore, then click [here](https://editor.swagger.io/?url=https://petstore.swagger.io/v2/swagger.yaml). Alternatively, you can load via the `Edit > Load Petstore OAS 2.0` menu option!_\n\nSome useful links:\n- [The Pet Store repository](https://github.com/swagger-api/swagger-petstore)\n- [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)",
+        "termsOfService": "http://api_url/terms/",
+        "contact": {
+            "name": "PB-ADMIN",
+            "email": "Dummy@upfront.com",
+            "url": "https://xyz.com"
         },
-        "responses": {}
-      }
+        "license": {
+            "name": "Apache 2.0",
+            "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+        }
     },
-    "/api/v1/document/client": {
-      "post": {
-        "tags": ["client"],
-        "summary": "API to create new client",
-        "description": "API to create new client",
-        "parameters": {
-          "content": {
-            "application/json": {
-              "name": "authorization",
-              "in": "headers",
-              "schema": {
-                "swagger": {
-                  "type": "object",
-                  "properties": {
-                    "authorization": {
-                      "type": "object",
-                      "properties": {
-                        "token": { "type": "string" },
-                        "refreshToken": { "type": "string" }
-                      },
-                      "required": ["token", "refreshToken"],
-                      "additionalProperties": false
+    "servers": [
+        {
+            "url": "http://localhost:3082/",
+            "description": "LocalHost server"
+        },
+        {
+            "url": "http://api.fincogrp.com:3082/",
+            "description": "Live server"
+        }
+    ],
+    "tags": [
+        "admin",
+        "user"
+    ],
+    "paths": {
+        "/api/v1/document/client/{id}": {
+            "delete": {
+                "tags": [
+                    "client"
+                ],
+                "summary": "API to delete client by id",
+                "description": "API to delete client by id",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "KEY of ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "minLength": 2,
+                            "maxLength": 2
+                        }
                     }
-                  },
-                  "additionalProperties": false
-                },
-                "components": {}
-              }
-            }
-          }
-        },
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "name": "body",
-              "in": "body",
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "minLength": 3,
-                    "maxLength": 100
-                  },
-                  "description": {
-                    "type": "string",
-                    "minLength": 3,
-                    "maxLength": 250
-                  },
-                  "logo": { "type": "string", "minLength": 3, "maxLength": 50 },
-                  "domain": {
-                    "type": "string",
-                    "minLength": 3,
-                    "maxLength": 50
-                  },
-                  "email": { "type": "string" },
-                  "phone": {
-                    "type": "string",
-                    "pattern": "^\\d+$",
-                    "minLength": 5
-                  },
-                  "countryCode": {
-                    "type": "string",
-                    "pattern": "^[0-9,+]+$",
-                    "minLength": 2
-                  },
-                  "address": {
-                    "type": "string",
-                    "minLength": 3,
-                    "maxLength": 150
-                  },
-                  "lat": { "type": "string", "minLength": 3, "maxLength": 50 },
-                  "lng": { "type": "string", "minLength": 3, "maxLength": 50 }
-                },
-                "required": [
-                  "name",
-                  "description",
-                  "logo",
-                  "domain",
-                  "email",
-                  "phone",
-                  "countryCode",
-                  "address",
-                  "lat",
-                  "lng"
                 ],
-                "additionalProperties": false
-              }
+                "responses": {}
+            },
+            "get": {
+                "tags": [
+                    "client"
+                ],
+                "summary": "API to get client by id",
+                "description": "API to get client by id",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "KEY of ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "minLength": 2,
+                            "maxLength": 2
+                        }
+                    }
+                ],
+                "responses": {}
+            },
+            "put": {
+                "tags": [
+                    "client"
+                ],
+                "summary": "API to update client by id",
+                "description": "API to update client by id",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "KEY of ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "minLength": 2,
+                            "maxLength": 2
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "name": "body",
+                            "in": "body",
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "maxLength": 100
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "maxLength": 250
+                                    },
+                                    "logo": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "maxLength": 50
+                                    },
+                                    "domain": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "maxLength": 50
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "pattern": "^\\d+$",
+                                        "minLength": 5
+                                    },
+                                    "countryCode": {
+                                        "type": "string",
+                                        "pattern": "^[0-9,+]+$",
+                                        "minLength": 2
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "maxLength": 150
+                                    },
+                                    "lat": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "maxLength": 50
+                                    },
+                                    "lng": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "maxLength": 50
+                                    }
+                                },
+                                "required": [
+                                    "name",
+                                    "description",
+                                    "logo",
+                                    "domain",
+                                    "email",
+                                    "phone",
+                                    "countryCode",
+                                    "address",
+                                    "lat",
+                                    "lng"
+                                ],
+                                "additionalProperties": false
+                            }
+                        }
+                    }
+                },
+                "responses": {}
             }
-          }
         },
-        "responses": {}
-      }
+        "/api/v1/document/client": {
+            "get": {
+                "tags": [
+                    "client"
+                ],
+                "summary": "API to create new client using get request",
+                "description": "API to create new client using get request",
+                "parameters": {
+                    "content": {
+                        "application/json": {
+                            "name": "authorization",
+                            "in": "headers",
+                            "schema": {
+                                "swagger": {
+                                    "type": "object",
+                                    "properties": {
+                                        "authorization": {
+                                            "type": "object",
+                                            "properties": {
+                                                "token": {
+                                                    "type": "string"
+                                                },
+                                                "refreshToken": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "token",
+                                                "refreshToken"
+                                            ],
+                                            "additionalProperties": false
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                },
+                                "components": {}
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "name": "body",
+                            "in": "body",
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "maxLength": 100
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "maxLength": 250
+                                    },
+                                    "logo": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "maxLength": 50
+                                    },
+                                    "domain": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "maxLength": 50
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "pattern": "^\\d+$",
+                                        "minLength": 5
+                                    },
+                                    "countryCode": {
+                                        "type": "string",
+                                        "pattern": "^[0-9,+]+$",
+                                        "minLength": 2
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "maxLength": 150
+                                    },
+                                    "lat": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "maxLength": 50
+                                    },
+                                    "lng": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "maxLength": 50
+                                    }
+                                },
+                                "required": [
+                                    "name",
+                                    "description",
+                                    "logo",
+                                    "domain",
+                                    "email",
+                                    "phone",
+                                    "countryCode",
+                                    "address",
+                                    "lat",
+                                    "lng"
+                                ],
+                                "additionalProperties": false
+                            }
+                        }
+                    }
+                },
+                "responses": {}
+            },
+            "post": {
+                "tags": [
+                    "client"
+                ],
+                "summary": "API to create new client",
+                "description": "API to create new client",
+                "parameters": {
+                    "content": {
+                        "application/json": {
+                            "name": "authorization",
+                            "in": "headers",
+                            "schema": {
+                                "swagger": {
+                                    "type": "object",
+                                    "properties": {
+                                        "authorization": {
+                                            "type": "object",
+                                            "properties": {
+                                                "token": {
+                                                    "type": "string"
+                                                },
+                                                "refreshToken": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "token",
+                                                "refreshToken"
+                                            ],
+                                            "additionalProperties": false
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                },
+                                "components": {}
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "name": "body",
+                            "in": "body",
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "maxLength": 100
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "maxLength": 250
+                                    },
+                                    "logo": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "maxLength": 50
+                                    },
+                                    "domain": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "maxLength": 50
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "pattern": "^\\d+$",
+                                        "minLength": 5
+                                    },
+                                    "countryCode": {
+                                        "type": "string",
+                                        "pattern": "^[0-9,+]+$",
+                                        "minLength": 2
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "maxLength": 150
+                                    },
+                                    "lat": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "maxLength": 50
+                                    },
+                                    "lng": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "maxLength": 50
+                                    }
+                                },
+                                "required": [
+                                    "name",
+                                    "description",
+                                    "logo",
+                                    "domain",
+                                    "email",
+                                    "phone",
+                                    "countryCode",
+                                    "address",
+                                    "lat",
+                                    "lng"
+                                ],
+                                "additionalProperties": false
+                            }
+                        }
+                    }
+                },
+                "responses": {}
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "adminAuthorization": {
+                "type": "apiKey",
+                "name": "Authorization",
+                "in": "header"
+            },
+            "userAuthorization": {
+                "type": "apiKey",
+                "name": "Authorization",
+                "in": "header"
+            }
+        }
     }
-  },
-  "components": {
-    "securitySchemes": {
-      "adminAuthorization": {
-        "type": "apiKey",
-        "name": "Authorization",
-        "in": "header"
-      },
-      "userAuthorization": {
-        "type": "apiKey",
-        "name": "Authorization",
-        "in": "header"
-      }
-    }
-  }
 }
