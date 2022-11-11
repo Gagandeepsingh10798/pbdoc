@@ -26,7 +26,7 @@ router.put('/client/:id',validations.admin.isAdminValid,permission.checkpermissi
 router.delete('/client/:id',validations.admin.isAdminValid,permission.checkpermission,controllers.admin.deleteClient);
 //  Adding path to db
 
-console.log(Apipermission.find());
+
 /*
 Module APIs
 */

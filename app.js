@@ -59,7 +59,6 @@ app.use('/test', async (req, res, next) => {
 /*
 API Routes
 */
-const route = require('./route');
 const { client } = require('./data-models');
 
 app.use('/api', route);

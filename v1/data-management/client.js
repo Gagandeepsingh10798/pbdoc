@@ -37,7 +37,7 @@ const ClientDataManagement = function () {
 
       let client = await new ClientModel(clientData).save();
 
-      console.log(client);
+     
       client = await ClientModel.findOne(
         { _id: client._id },
         PROJECTIONS.createClient
@@ -54,13 +54,11 @@ const ClientDataManagement = function () {
       //
       await validations.validatequeryClient(queryData);
       const { limit, page } = queryData;
-      console.log(limit);
+    
       var limits = limit ? +limit : 10;
       var skip = page ? (page - 1) * limits : 0;
       let client = await ClientModel.find({}, PROJECTIONS.createClient).lean();
       if (client.length > 0) {
-        console.log(limits);
-       
           let clients = await ClientModel.find({}, PROJECTIONS.createClient)
             .limit(limits)
             .skip(skip)
@@ -123,8 +121,7 @@ const ClientDataManagement = function () {
         }).lean();
       }
 
-      console.log(isExists);
-
+     
       if (!isExists) throw new Error(MESSAGES.admin.CLIENT_WITH_ID_NOT_EXIST);
 
       return isExists;

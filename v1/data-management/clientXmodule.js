@@ -14,8 +14,6 @@ const clientXmoduleDataManagement = function () {
 
     this.attachtable = async (clientid,modulearray) => {
         try {
-       console.log(clientid);
-
           let clientmodule = await new ClientXModuleModel(modulearray).save();
           clientmodule = await ClientXModuleModel.findOne({ _id: clientmodule._id },PROJECTIONS.createModule).lean();
     

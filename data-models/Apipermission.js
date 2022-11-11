@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 const ApiPermissionModel = new Schema({
     userType: {
         type: String,
-        enum: ['ADMIN', 'CLIENT']
+        enum: ['ADMIN', 'CLIENT','SUB_ADMIN','DEVELOPER','TESTER']
     },
     permissions: [{
         type: String,
@@ -19,13 +19,14 @@ var m = new ApiPermission;
 m.userType = "ADMIN";
 m.permissions = admin;
 m.save(()=>{
-    console.log("saved");
+    console.log("Added to table, ApiPermission");
 })
 var n = new ApiPermission;
 n.userType = "CLIENT";
 n.permissions = client;
 n.save(()=>{
-    console.log("saved");
+    console.log("Added to table, ApiPermission");
+    
 })
 
 module.exports = ApiPermission;

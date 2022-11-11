@@ -71,7 +71,6 @@ io.use(async (socket, next) => {
     })
 
     socket.on("sendMessage", async (data) => {
-        console.log(data);
         let userId = Users[String(socket.id)]
         let recieverDetails = await Models.Customer.findOne({ _id: ObjectId(data.reciever) }).lean();
         if (!recieverDetails) {
