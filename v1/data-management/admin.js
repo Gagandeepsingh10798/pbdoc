@@ -237,7 +237,11 @@ const AdminDataManagement = function () {
                     _id: ObjectId(_id),
                     isDeleted: false,
                 }).lean();
+               
+
             }
+
+            
 
             if (!isExists) throw new Error(MESSAGES.admin.CLIENT_WITH_ID_NOT_EXIST);
 

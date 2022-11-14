@@ -123,7 +123,6 @@ const ModuleDataManagement = function () {
           { _id: ObjectId(_id), isDeleted: false }
         ).lean();
       }
-
       if (!isExists) throw new Error(MESSAGES.admin.MODULE_WITH_ID_NOT_EXIST);
      
       return isExists;

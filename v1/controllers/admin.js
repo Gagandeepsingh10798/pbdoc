@@ -94,8 +94,8 @@ module.exports = {
             let AdminModel = new AdminDataManagement();
             let admin = await AdminModel.checkAdminExists({ email: req.user.email });
             await universal.response(res, CODES.OK, MESSAGES.admin.PROFILE_FETCHED_SUCCESSFULLY, admin);
-        }
-        catch (error) {
+    }
+    catch (error) {
             next(error);
         }
     },
@@ -128,7 +128,6 @@ module.exports = {
     /* Client APIs */
     createClient: async (req, res, next) => {
         try {
-
             let ClientModel = new ClientDataManagement();
             let client = await ClientModel.createClient(req.body);
 

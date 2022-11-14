@@ -11,6 +11,9 @@ const Models = require("./data-models");
 const mongoose = require('mongoose');
 const swaggerUI = require('swagger-ui-express');
 const swaggerDocument = require('./swagger-doc/v1/client/swagger.json');
+const swaggerdocumentmodule = require("./swagger-doc/v1/module/swagger.json");
+const swaggerdocumentlogs = require("./swagger-doc/v1/logs/swagger.json");
+let SWAGGER_DOCS = "";
 const controllers = require('./v1/controllers');
 const cron = require('node-cron');
 const route = require('./route');
@@ -56,14 +59,26 @@ app.use('/test', async (req, res, next) => {
 /*
 API Routes
 */
+const { client } = require('./data-models');
+
 app.use('/api', route);
 
 /*
 Swagger setup
 */
-app.use('/api-docs/client', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
+app.use('/api-docs/:params', (req,res,next) => {
+    if(req.params.params === "modules"){
+        SWAGGER_DOCS = swaggerdocumentmodule    
+    }
+    if(req.params.params === "clients"){
+        SWAGGER_DOCS = swaggerDocument    
+    }if(req.params.params === "logs"){
+        SWAGGER_DOCS = swaggerdocumentlogs    
+    }
 app.use('/uploads', express.static(path.join(__dirname, 'public')));
 
+    next();
+}, swaggerUI.serve, swaggerUI.setup(swaggerdocumentlogs));
 /*
 Catch 404 Error
 */

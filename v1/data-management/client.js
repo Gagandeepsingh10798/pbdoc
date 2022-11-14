@@ -36,6 +36,8 @@ const ClientDataManagement = function () {
       }
 
       let client = await new ClientModel(clientData).save();
+
+     
       client = await ClientModel.findOne(
         { _id: client._id },
         PROJECTIONS.createClient
@@ -52,6 +54,7 @@ const ClientDataManagement = function () {
       //
       await validations.validatequeryClient(queryData);
       const { limit, page } = queryData;
+    
       var limits = limit ? +limit : 10;
       var skip = page ? (page - 1) * limits : 0;
       let client = await ClientModel.find({}, PROJECTIONS.createClient).lean();
@@ -117,7 +120,8 @@ const ClientDataManagement = function () {
           isDeleted: false,
         }).lean();
       }
-      
+
+     
       if (!isExists) throw new Error(MESSAGES.admin.CLIENT_WITH_ID_NOT_EXIST);
 
       return isExists;
