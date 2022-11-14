@@ -94,7 +94,7 @@ module.exports = {
     //     await paths.forEach(filePath => fs.unlinkSync(path.resolve(__dirname, '..' + filePath)))
     //     return
     // },
-    deleteFilesd:async(paths)=>
+    deleteFilesByPath:async(paths)=>
     {
       await unlinkAsync(paths);
     },

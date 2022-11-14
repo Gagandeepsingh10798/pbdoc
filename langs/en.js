@@ -156,10 +156,12 @@ module.exports = {
   NOT_FOUND: "Not Found !",
   No_FUEL_PRODUCT_ADDED_BY_ADMIN: "No Fuel Category added by admin till now",
   CLIENT_WITH_ID_NOT_EXIST:"No Client Exist With This Id",
+  LOGS_WITH_ID_NOT_EXIST:"LOGS_WITH_ID_NOT_EXIST",
   MODULE_WITH_ID_NOT_EXIST:"No Module Exist With This Id",
   GETCLIENT_UPDATED_SUCCESSFULLY:"Client Updated Successfully",
   GETMODULE_UPDATED_SUCCESSFULLY:"Module Updated Successfully",
   CLIENTS_NOT_EXIST:"No Data Exist",
   CLIENT_DELETED_SUCCESSFULLY:"Client Deleted Successfully",
+  LOGS_DELETED_SUCCESSFULLY:"Logs Deleted Successfully",
   MODULE_DELETED_SUCCESSFULLY:"Module Deleted Successfully"
 };

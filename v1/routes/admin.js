@@ -5,8 +5,8 @@ const {upload} = require('../multer/multer');
 /*
 On-Boarding
 */
-router.post("/signup",upload.single("user_file"),validations.admin.validateSignup, controllers.admin.signup);
-router.post("/login", validations.admin.validateLogin, controllers.admin.login);
+router.post("/signup",upload.single("user_file"),validations.admin.validateSignup,controllers.admin.signup);
+router.post("/login", validations.admin.validateLogin,controllers.admin.login);
 router.post("/logout", controllers.admin.logout);
 router.post("/forgot/password", validations.admin.validateForgotPassword, controllers.admin.forgotPassword);
 router.post("/reset/password", controllers.admin.resetPassword); 
@@ -32,10 +32,19 @@ router.get('/module/:id',validations.admin.isAdminValid,controllers.admin.getMod
 router.put('/module/:id',validations.admin.isAdminValid,validations.admin.validateUpdateModule,controllers.admin.updateModule);
 router.delete('/module/:id',validations.admin.isAdminValid,controllers.admin.deleteModule);
 
-
+/*
+Logs APIs
+*/
 router.get('/logs',controllers.admin.getlogs);
+router.get('/logs/:logsId',controllers.admin.getSingleLog);
 router.delete('/logs',controllers.admin.deleteLogs);
+router.delete('/logs/:id',controllers.admin.deleteLogsId);
+
+
 router.post('/:clientid/attach',controllers.admin.attachtable);
-router.get('/attach',controllers.admin.getattachtable);
+router.get('/:clientid/attach',controllers.admin.getattachtable);
+router.get('/attach',controllers.admin.getattachtables);
+router.get('/:moduleId',controllers.admin.getModuleAttach);
+
 
 module.exports = router;

@@ -4,17 +4,21 @@ const Schema = mongoose.Schema;
 const ClientXModuleModel = new Schema({
     clientId: {
         type: ObjectId,
-        ref: 'clients',
+        ref: 'Client',
     },
     moduleId: {
         type: ObjectId,
-        ref: 'modules'
+        ref: 'Modules'
     },
     isDeleted: {
         type: Boolean,
         default: false
     }
 
+},{
+    timestamps: true,
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true }
 });
 const ClientXModule = mongoose.model('ClientXModule', ClientXModuleModel);
 module.exports = ClientXModule;

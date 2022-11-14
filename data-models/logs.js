@@ -14,6 +14,10 @@ const LogsModel = new Schema({
         default: false
     }
 
+},{
+    timestamps: true,
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true }
 });
 const Logs =mongoose.model('Logs',LogsModel);
 module.exports = Logs;

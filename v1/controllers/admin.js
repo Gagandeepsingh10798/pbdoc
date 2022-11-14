@@ -265,13 +265,37 @@ module.exports = {
             next(error);
         }
     },
+    getSingleLog: async (req, res, next) => {
+        try {
+            let LogsModel = new LogsDataManagement();
+            let logs = await LogsModel.getSingleLog(req.params.logsId);
+
+            await universal.response(res, CODES.OK, MESSAGES.admin.GETLOGS_SUCCESSFULLY, logs);
+        }
+        catch (error) {
+            next(error);
+        }
+    },
     deleteLogs: async (req, res, next) => {
         try {
 
             let LogsModel = new LogsDataManagement();
             let logs = await LogsModel.deletelogs();
 
-            await universal.response(res, CODES.OK, MESSAGES.admin.CLIENT_DELETED_SUCCESSFULLY, logs);
+            await universal.response(res, CODES.OK, MESSAGES.admin.LOGS_DELETED_SUCCESSFULLY, logs);
+
+
+        } catch (error) {
+            next(error);
+        }
+    },
+    deleteLogsId: async (req, res, next) => {
+        try {
+            let findId = req.params.id;
+            let LogsModel = new LogsDataManagement();
+            let logs = await LogsModel.deletelogsId(findId);
+
+            await universal.response(res, CODES.OK, MESSAGES.admin.LOGS_DELETED_SUCCESSFULLY, logs);
 
 
         } catch (error) {
@@ -287,7 +311,7 @@ module.exports = {
         try {
 
             let ClientXModuleModel = new ClientXModuleDataManagement();
-            let module = await ClientXModuleModel.attachtable(req.params, req.body);
+            let module = await ClientXModuleModel.attachtable(req.params,req.body);
 
             await universal.response(res, CODES.OK, MESSAGES.admin.MODULE_REGISTERED_SUCCESSFULLY, module);
         }
@@ -299,7 +323,31 @@ module.exports = {
         try {
 
             let ClientXModuleModel = new ClientXModuleDataManagement();
-            let clientmoduledata = await ClientXModuleModel.getattachtable();
+            let clientmoduledata = await ClientXModuleModel.getattachtable(req.params);
+
+            await universal.response(res, CODES.OK, MESSAGES.admin.MODULE_REGISTERED_SUCCESSFULLY, clientmoduledata);
+        }
+        catch (error) {
+            next(error);
+        }
+    },
+    getattachtables: async (req, res, next) => {
+        try {
+
+            let ClientXModuleModel = new ClientXModuleDataManagement();
+            let clientmoduledata = await ClientXModuleModel.getattachtables();
+
+            await universal.response(res, CODES.OK, MESSAGES.admin.MODULE_REGISTERED_SUCCESSFULLY, clientmoduledata);
+        }
+        catch (error) {
+            next(error);
+        }
+    },
+    getModuleAttach: async (req, res, next) => {
+        try {
+
+            let ClientXModuleModel = new ClientXModuleDataManagement();
+            let clientmoduledata = await ClientXModuleModel.getModuleAttach(req.params.moduleId);
 
             await universal.response(res, CODES.OK, MESSAGES.admin.MODULE_REGISTERED_SUCCESSFULLY, clientmoduledata);
         }
@@ -307,12 +355,5 @@ module.exports = {
             next(error);
         }
     }
-
-
-
-
-
-
-
 
 };

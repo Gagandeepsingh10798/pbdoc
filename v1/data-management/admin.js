@@ -192,26 +192,22 @@ const AdminDataManagement = function () {
         try {
 
             let updated = {};
-
             updated.profilePic = profile.path;
             const _id = findId;
-            //  await AdminModel.deleteMany({ });
             if (profile) {
                 let isExists = false;
                 isExists = await AdminModel.findOne({
                     _id: ObjectId(_id),
                     isDeleted: false,
                 }).lean();
+
                 if (isExists) {
                     const { profilePic } = isExists;
-                    //   await unlinkAsync(profilePic);
-                    await universal.deleteFilesd(profilePic);
+                    await universal.deleteFilesByPath(profilePic);
                 }
                 else {
-                    await universal.deleteFilesd(profile.path);
+                    await universal.deleteFilesByPath(profile.path);
                 }
-
-
             }
 
             let admin = await this.checkAdminsExists(findId);
@@ -241,11 +237,7 @@ const AdminDataManagement = function () {
                     _id: ObjectId(_id),
                     isDeleted: false,
                 }).lean();
-                console.log(isExists);
-
             }
-
-            console.log(isExists);
 
             if (!isExists) throw new Error(MESSAGES.admin.CLIENT_WITH_ID_NOT_EXIST);
 

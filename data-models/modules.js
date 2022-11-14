@@ -44,6 +44,10 @@ const ModulesModel = new Schema({
         default: false
     }
 
+},{
+    timestamps: true,
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true }
 });
 const Modules =mongoose.model('Modules',ModulesModel);
 module.exports = Modules;

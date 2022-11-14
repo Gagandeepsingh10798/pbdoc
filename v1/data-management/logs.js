@@ -15,7 +15,7 @@ const LogsDataManagement = function () {
   this.getlogs = async () => {
     try {
 
-      let logs = await LogsModel.find({}, PROJECTIONS.createClient).lean();
+      let logs = await LogsModel.find({}, PROJECTIONS.createLogs).lean();
       return logs;
 
 
@@ -34,15 +34,43 @@ const LogsDataManagement = function () {
       throw err;
     }
   };
+
   this.clearLogs = async () => {
     try {
-      await LogsModel.deleteMany({});
+      await LogsModel.deleteMany({}); 
       return;
+    } catch (err) {
+      throw err;
+    }
+
+  };
+
+  this.deletelogsId = async (findId) => {
+    try {
+      const _id = findId;
+      await LogsModel.findOneAndDelete({ _id: ObjectId(_id) });
+    let deleted = await LogsModel.findOne(
+        { _id: ObjectId(_id) }
+      ).lean();
+      return deleted;
     } catch (err) {
       throw err;
     }
   };
 
+  this.getSingleLog= async (logsId) => {
+    try {
+      const _id=logsId;
+      let logsExists = await LogsModel.findById({ _id },PROJECTIONS.createLogs).lean();
+      if (logsExists) {
+        return logsExists;
+      } else {
+        throw new Error(MESSAGES.admin.LOGS_WITH_ID_NOT_EXIST);
+      }
+    } catch (err) {
+      throw err;
+    }
+  };
 
 
 
