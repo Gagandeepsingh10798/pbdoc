@@ -15,7 +15,7 @@ router.post("/forgot/password", validations.admin.validateForgotPassword,permiss
 router.post("/reset/password" ,controllers.admin.resetPassword);
 router.post("/change/password", validations.admin.isAdminValid,permission.checkpermission, controllers.admin.changePassword);
 router.get("/profile", validations.admin.isAdminValid,permission.checkpermission, controllers.admin.getProfile);
-router.put('/profile/:id',upload.single("user_file"),controllers.admin.updateProfile);
+router.put('/profile',validations.admin.isAdminValid,upload.single("profilePic"),controllers.admin.updateProfile);
 /*
 Client APIs
 */
@@ -24,8 +24,6 @@ router.get('/client',validations.admin.isAdminValid,permission.checkpermission,c
 router.get('/client/:id',validations.admin.isAdminValid,permission.checkpermission,controllers.admin.getClientbyid);
 router.put('/client/:id',validations.admin.isAdminValid,permission.checkpermission,validations.admin.updateCreateCLient,controllers.admin.updateClient);
 router.delete('/client/:id',validations.admin.isAdminValid,permission.checkpermission,controllers.admin.deleteClient);
-//  Adding path to db
-
 
 /*
 Module APIs

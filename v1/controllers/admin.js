@@ -94,8 +94,8 @@ module.exports = {
             let AdminModel = new AdminDataManagement();
             let admin = await AdminModel.checkAdminExists({ email: req.user.email });
             await universal.response(res, CODES.OK, MESSAGES.admin.PROFILE_FETCHED_SUCCESSFULLY, admin);
-    }
-    catch (error) {
+        }
+        catch (error) {
             next(error);
         }
     },
@@ -114,11 +114,14 @@ module.exports = {
     updateProfile: async (req, res, next) => {
         try {
 
-            let findId = req.params.id;
-            let AdminModel = new AdminDataManagement();
-            let model = await AdminModel.updateProfilebyid(findId, req.file);
+            let updatePayload = {
+                profilePic: req.file.path,
+                ...req.body
+            };
 
-            await universal.response(res, CODES.OK, MESSAGES.admin.GETCLIENT_UPDATED_SUCCESSFULLY, model);
+            let AdminModel = new AdminDataManagement();
+            let updateResult = await AdminModel.updateProfileById(updatePayload, req.user);
+            await universal.response(res, CODES.OK, MESSAGES.admin.GETCLIENT_UPDATED_SUCCESSFULLY, updateResult);
 
 
         } catch (error) {
@@ -310,7 +313,7 @@ module.exports = {
         try {
 
             let ClientXModuleModel = new ClientXModuleDataManagement();
-            let module = await ClientXModuleModel.attachtable(req.params,req.body);
+            let module = await ClientXModuleModel.attachtable(req.params, req.body);
 
             await universal.response(res, CODES.OK, MESSAGES.admin.MODULE_REGISTERED_SUCCESSFULLY, module);
         }

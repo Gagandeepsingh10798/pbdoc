@@ -104,4 +104,5 @@ Cron Tasks
 const clearLogs = cron.schedule('0 * * * *', async () => {
     controllers.admin.clearLogs();
 });
+
 clearLogs.start();

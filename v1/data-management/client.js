@@ -130,12 +130,10 @@ const ClientDataManagement = function () {
     }
   };
 
-  this.deleteClientbyid = async (findId) => {
+  this.deleteClientbyid = async (clientId) => {
     try {
-      let client = await this.checkClientExists(findId);
-      await ClientModel.findOneAndDelete({ _id: ObjectId(client._id) });
-      client = await ClientModel.findOne({ _id: ObjectId(client._id) }).lean();
-      return client;
+      await ClientModel.findOneAndDelete({ _id: ObjectId(clientId) });
+      return;
     } catch (err) {
       throw err;
     }

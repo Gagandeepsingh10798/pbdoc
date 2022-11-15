@@ -188,38 +188,12 @@ const AdminDataManagement = function () {
         }
     };
 
-    this.updateProfilebyid = async (findId, profile) => {
+    this.updateProfileById = async (updatePayload, userPayload) => {
         try {
-
-            let updated = {};
-            updated.profilePic = profile.path;
-            const _id = findId;
-            if (profile) {
-                let isExists = false;
-                isExists = await AdminModel.findOne({
-                    _id: ObjectId(_id),
-                    isDeleted: false,
-                }).lean();
-
-                if (isExists) {
-                    const { profilePic } = isExists;
-                    await universal.deleteFilesByPath(profilePic);
-                }
-                else {
-                    await universal.deleteFilesByPath(profile.path);
-                }
-            }
-
-            let admin = await this.checkAdminsExists(findId);
-            await AdminModel.findOneAndUpdate(
-                { _id: ObjectId(admin._id) },
-                updated
-            );
-            admin = await AdminModel.findOne(
-                { _id: ObjectId(admin._id) },
-                PROJECTIONS.createClient
-            ).lean();
-            return admin;
+            let userId = ObjectId(userPayload._id);
+            if (updatePayload.profilePic) await universal.deleteFilesByPath(userPayload.profilePic);
+            await AdminModel.findOneAndUpdate({ _id: userId }, updatePayload);
+            return await AdminModel.findOne({ _id: userId }, PROJECTIONS.createClient).lean();
         } catch (err) {
             throw err;
         }
@@ -237,11 +211,11 @@ const AdminDataManagement = function () {
                     _id: ObjectId(_id),
                     isDeleted: false,
                 }).lean();
-               
+
 
             }
 
-            
+
 
             if (!isExists) throw new Error(MESSAGES.admin.CLIENT_WITH_ID_NOT_EXIST);
 

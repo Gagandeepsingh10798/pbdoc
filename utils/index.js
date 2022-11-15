@@ -94,9 +94,11 @@ module.exports = {
     //     await paths.forEach(filePath => fs.unlinkSync(path.resolve(__dirname, '..' + filePath)))
     //     return
     // },
-    deleteFilesByPath:async(paths)=>
+    deleteFilesByPath:async(path)=>
     {
-      await unlinkAsync(paths);
+        if(fs.existsSync(path)){
+            await unlinkAsync(path);
+        }
     },
     // /*
     // Email Service
