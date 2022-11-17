@@ -29,7 +29,7 @@ router.delete('/client/:id',validations.admin.isAdminValid,controllers.admin.del
 Module APIs
 */
 router.post('/module',validations.admin.isAdminValid,validations.admin.validateCreateModule,controllers.admin.createModule);
-router.get('/module',validations.admin.isAdminValid,controllers.admin.getModule);
+router.get('/module',controllers.admin.getModule);
 router.get('/module/:id',validations.admin.isAdminValid,controllers.admin.getModulebyid);
 router.put('/module/:id',validations.admin.isAdminValid,validations.admin.validateUpdateModule,controllers.admin.updateModule);
 router.delete('/module/:id',validations.admin.isAdminValid,controllers.admin.deleteModule);
@@ -40,13 +40,12 @@ Logs APIs
 router.get('/logs',controllers.admin.getlogs);
 router.get('/logs/:logsId',controllers.admin.getSingleLog);
 router.delete('/logs',controllers.admin.deleteLogs);
-router.delete('/logs/:id',controllers.admin.deleteLogsId);
+router.delete('/logs/:id',controllers.admin.deleteLog);
 
 
-router.post('/:clientid/attach',controllers.admin.attachtable);
-router.get('/:clientid/attach',controllers.admin.getattachtable);
-router.get('/attach',controllers.admin.getattachtables);
-router.get('/:moduleId',controllers.admin.getModuleAttach);
-
+router.post('/module/attach/:clientid',controllers.admin.attachtable);
+router.get('/modules/:clientid',controllers.admin.getattachtable);
+router.get('/module/clients/:moduleId',controllers.admin.getModuleAttach);
+router.put('/modules/detach/:clientid',controllers.admin.deletebyclientid);
 
 module.exports = router;

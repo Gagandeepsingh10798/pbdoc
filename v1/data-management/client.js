@@ -37,7 +37,6 @@ const ClientDataManagement = function () {
 
       let client = await new ClientModel(clientData).save();
 
-     
       client = await ClientModel.findOne(
         { _id: client._id },
         PROJECTIONS.createClient

@@ -184,7 +184,6 @@ module.exports = {
             let findId = req.params.id;
             let ClientModel = new ClientDataManagement();
             let client = await ClientModel.deleteClientbyid(findId);
-
             await universal.response(res, CODES.OK, MESSAGES.admin.CLIENT_DELETED_SUCCESSFULLY, client);
 
 
@@ -291,11 +290,11 @@ module.exports = {
             next(error);
         }
     },
-    deleteLogsId: async (req, res, next) => {
+    deleteLog: async (req, res, next) => {
         try {
             let findId = req.params.id;
             let LogsModel = new LogsDataManagement();
-            let logs = await LogsModel.deletelogsId(findId);
+            let logs = await LogsModel.deletelog(findId);
 
             await universal.response(res, CODES.OK, MESSAGES.admin.LOGS_DELETED_SUCCESSFULLY, logs);
 
@@ -333,25 +332,24 @@ module.exports = {
             next(error);
         }
     },
-    getattachtables: async (req, res, next) => {
+    getModuleAttach: async (req, res, next) => {
         try {
 
             let ClientXModuleModel = new ClientXModuleDataManagement();
-            let clientmoduledata = await ClientXModuleModel.getattachtables();
-
+            let clientmoduledata = await ClientXModuleModel.getModuleAttach(req.params.moduleId);
             await universal.response(res, CODES.OK, MESSAGES.admin.MODULE_REGISTERED_SUCCESSFULLY, clientmoduledata);
         }
         catch (error) {
             next(error);
         }
     },
-    getModuleAttach: async (req, res, next) => {
+    deletebyclientid: async (req, res, next) => {
         try {
 
             let ClientXModuleModel = new ClientXModuleDataManagement();
-            let clientmoduledata = await ClientXModuleModel.getModuleAttach(req.params.moduleId);
+            let clientmoduledata = await ClientXModuleModel.deletebyclientid(req.params.clientid,req.body.modules);
 
-            await universal.response(res, CODES.OK, MESSAGES.admin.MODULE_REGISTERED_SUCCESSFULLY, clientmoduledata);
+            await universal.response(res, CODES.OK, MESSAGES.admin.MODULE_DELETED_SUCCESSFULLY,clientmoduledata);
         }
         catch (error) {
             next(error);

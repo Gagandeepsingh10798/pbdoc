@@ -62,6 +62,7 @@ API Routes
 const { client } = require('./data-models');
 
 app.use('/api', route);
+app.use('/uploads', express.static(path.join(__dirname, './uploads')));
 
 /*
 Swagger setup
@@ -75,7 +76,6 @@ app.use('/api-docs/:params', (req,res,next) => {
     }if(req.params.params === "logs"){
         SWAGGER_DOCS = swaggerdocumentlogs    
     }
-app.use('/uploads', express.static(path.join(__dirname, 'public')));
 
     next();
 }, swaggerUI.serve, swaggerUI.setup(swaggerdocumentlogs));
@@ -102,7 +102,7 @@ app.use(async (err, req, res, next) => {
 Cron Tasks
 */
 const clearLogs = cron.schedule('0 * * * *', async () => {
-    controllers.admin.clearLogs();
+     controllers.admin.clearLogs();
 });
 
 clearLogs.start();

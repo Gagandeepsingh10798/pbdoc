@@ -45,7 +45,7 @@ const LogsDataManagement = function () {
 
   };
 
-  this.deletelogsId = async (findId) => {
+  this.deletelog = async (findId) => {
     try {
       const _id = findId;
       await LogsModel.findOneAndDelete({ _id: ObjectId(_id) });

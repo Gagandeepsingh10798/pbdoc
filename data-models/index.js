@@ -5,5 +5,6 @@ module.exports = {
     authToken: require('./authToken'),
     modules: require('./modules'),
     logs:require('./logs'),
-    Apipermission:require('./Apipermission')
+    Apipermission:require('./Apipermission'),
+    clientXmodules:require('./clientXmodule')
 };

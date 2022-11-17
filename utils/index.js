@@ -5,8 +5,12 @@ const jwt = require('jsonwebtoken');
 const fs=require("fs");
 const { promisify } = require('util');
 const unlinkAsync = promisify(fs.unlink);
+const { DefaultAzureCredential } = require("@azure/identity");
+const { BlobServiceClient } = require("@azure/storage-blob");
+const { Blob } = require('buffer');
+const { v1: uuidv1 } = require("uuid");
 // const fs = require("fs");
-// const path = require("path");
+const path = require("path");
 // const ffmpeg = require('fluent-ffmpeg')
 // const { Parser } = require('json2csv');
 // const csv = require('csv-parser')
@@ -117,6 +121,59 @@ module.exports = {
             throw error;
         }
     },
+     uploadImage : async function(profile)  {
+        try {
+            
+          var img = profile;
+          console.log("udemy",img);
+          const promise = fs.promises.readFile(path.join(img.path));
+         console.log(promise);
+                   const accountName = "livedemo1234";
+      
+          const blobServiceClient = new BlobServiceClient(
+            `https://${accountName}.blob.core.windows.net`,
+            new DefaultAzureCredential()
+          );
+         
+          // Create a unique name for the container
+          const containerName = 'quickstart';
+          console.log('\nCreating container...');
+          console.log('\t', containerName);
+          const containerClient = blobServiceClient.getContainerClient(containerName);
+      
+          const blobName = 'quickstart' + uuidv1() + '.jpg';
+      
+          // Get a block blob client
+          const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+      
+          // Display blob name and url
+          console.log(
+            `\nUploading to Azure storage as blob\n\tname: ${blobName}:\n\tURL: ${blockBlobClient.url}`
+          );
+      
+          // Upload data to the blob
+          const uploadBlobResponse = await blockBlobClient.uploadFile(path.join(img.path));
+          console.log(
+            `Blob was uploaded successfully. requestId: ${uploadBlobResponse.requestId}`
+          );
+        
+      
+          // List the blob(s) in the container.
+          var url = "";
+          for await (const blob of containerClient.listBlobsFlat()) {
+            // Get Blob Client from name, to get the URL
+            const tempBlockBlobClient = containerClient.getBlockBlobClient(blob.name);
+    
+            url=tempBlockBlobClient.url;
+          }
+          console.log(url);
+          return url;
+        }
+       
+        catch (err) {
+          console.log(`Error: ${err.message}`);
+        }
+      }
     // getStatus: (statusString) => {
     //     const status = {
     //         "NOT ACCEPTED": 0,
