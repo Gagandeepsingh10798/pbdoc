@@ -1,6 +1,9 @@
-const { AdminDataManagement, ClientDataManagement, ModuleDataManagement, LogsDataManagement, ClientXModuleDataManagement } = require('../data-management');
+const { AdminDataManagement, ClientDataManagement, ModuleDataManagement, LogsDataManagement, ClientXModuleDataManagement,permissionDataManagement, permissionDataManagement } = require('../data-management');
 const universal = require('../../utils');
+const bull = require('bull');
+
 const { CODES, MESSAGES } = require('../../constants');
+const models = require('../../data-models')
 module.exports = {
     signup: async (req, res, next) => {
         try {
@@ -13,7 +16,6 @@ module.exports = {
             };
             await universal.response(res, CODES.OK, MESSAGES.admin.ADMIN_REGISTERED_SUCCESSFULLY, admin);
         } catch (error) {
-
             next(error);
         }
     },
@@ -354,6 +356,55 @@ module.exports = {
         catch (error) {
             next(error);
         }
+    },
+    getAllApi: async (req, res, next) => {
+        try {
+            let permissionModuleModel = new permissionDataManagement();
+            let allapi = await permissionModuleModel.getAllApi();
+            await universal.response(res,CODES.OK,MESSAGES.admin.GET_ALL_APIS,allapi);
+        }
+        catch (error) {
+            next(error);
+        }
+    },
+    addPermission: async (req, res, next) => {
+        try {
+            let permissionModuleModel = new permissionDataManagement();
+            let addpermission = permissionModuleModel.addPermission(req.body);
+          await  universal.response(res, CODES.OK, MESSAGES.admin.ADD_ALL_APIS_USERTYPE, addpermission);
+        }
+        catch (error) {
+            console.log(error);
+            next(error);
+        }
+
+    },
+    getPermissionsByUserType: async (req, res, next) => {
+        try {
+            let permissionModuleModel = new permissionDataManagement();
+            let getAllpermissionByuserType = permissionModuleModel.getPermissionsByUserType(req.body);
+            await universal.response(res, CODES.OK, MESSAGES.admin.MODULE_REGISTERED_SUCCESSFULLY, getAllpermissionByuserType);
+        } catch (error) {
+            next(error);
+        }
+    },
+    sendNotifications: async(req,res,next)=>{
+        try{
+            let ClientModel = new ClientDataManagement();
+            let client = await ClientModel.getClient(req.query);
+
+            await universal.response(res, CODES.OK, MESSAGES.admin.GETCLIENT_REGISTERED_SUCCESSFULLY, client);
+        }catch(err)
+        {
+            next(err);
+        }
     }
+
+
+
+
+
+
+
 
 };

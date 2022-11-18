@@ -9,6 +9,8 @@ const { DefaultAzureCredential } = require("@azure/identity");
 const { BlobServiceClient } = require("@azure/storage-blob");
 const { Blob } = require('buffer');
 const { v1: uuidv1 } = require("uuid");
+const Models = require('../data-models');
+const {getEndpoints} = require('express-routes');
 // const fs = require("fs");
 const path = require("path");
 // const ffmpeg = require('fluent-ffmpeg')
@@ -203,4 +205,24 @@ module.exports = {
     //             .on('error', reject);
     //     })
     // }
+    addApisToDB : async(app)=>{
+    try{
+
+        Models.Apis.collection.drop();
+        let allapis = getEndpoints(app);
+        
+        allapis.forEach(e=>{
+            var x = e.path;
+            var n = new Models.Apis;
+            n.path = e.path;
+            n.methods = e.methods;
+            n.name = x.substring(8),
+            n.isDeleted = false,
+            n.save()
+        })   
+    }catch(error)
+    {
+        throw error;
+    }
+    }
 };

@@ -1,8 +1,7 @@
-/* 
-Import Required Modules
-*/
+const MongoClient = require('mongodb').MongoClient;
 const config = require('config');
 const http = require("http");
+const {getEndpoints} = require('express-routes');
 const cors = require("cors");
 const morgan = require('morgan');
 const express = require("express");
@@ -13,11 +12,11 @@ const swaggerUI = require('swagger-ui-express');
 const swaggerDocument = require('./swagger-doc/v1/client/swagger.json');
 const swaggerdocumentmodule = require("./swagger-doc/v1/module/swagger.json");
 const swaggerdocumentlogs = require("./swagger-doc/v1/logs/swagger.json");
-let SWAGGER_DOCS = "";
 const controllers = require('./v1/controllers');
 const cron = require('node-cron');
 const route = require('./route');
 const app = express();
+const helperFunctions = require('./utils/index')
 app.use(cors());
 
 /*
@@ -32,9 +31,13 @@ server.listen(config.get('PORT'), () => {
 /*
 Database Connection
 */
-mongoose.connect(config.get('DB_URL'), { useNewUrlParser: true, useUnifiedTopology: true }).then(
-    (db) => console.log(`****************************************** MONGODB CONNECTED ***********************************************`),
-    (err) => console.log("MongoDB " + String(err.message))
+mongoose.connect(config.get('DB_URL'), { useNewUrlParser: true, useUnifiedTopology: true })
+.then(
+    async (db) => {
+        console.log(`******************************************MONGODB CONNECTED ***********************************************`)
+        await helperFunctions.addApisToDB(app)
+    },
+    (err) => console.log("MongoDB " + String(err.message)),
 );
 
 /* 
@@ -64,16 +67,14 @@ const { client } = require('./data-models');
 app.use('/api', route);
 app.use('/uploads', express.static(path.join(__dirname, './uploads')));
 
-/*
-Swagger setup
-*/
 app.use('/api-docs/:params', (req,res,next) => {
     if(req.params.params === "modules"){
         SWAGGER_DOCS = swaggerdocumentmodule    
     }
     if(req.params.params === "clients"){
         SWAGGER_DOCS = swaggerDocument    
-    }if(req.params.params === "logs"){
+    }
+    if(req.params.params === "logs"){
         SWAGGER_DOCS = swaggerdocumentlogs    
     }
 
