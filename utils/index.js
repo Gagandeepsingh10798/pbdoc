@@ -125,7 +125,6 @@ module.exports = {
     },
      uploadImage : async function(profile)  {
         try {
-            
           var img = profile;
           console.log("udemy",img);
           const promise = fs.promises.readFile(path.join(img.path));
@@ -152,7 +151,6 @@ module.exports = {
           console.log(
             `\nUploading to Azure storage as blob\n\tname: ${blobName}:\n\tURL: ${blockBlobClient.url}`
           );
-      
           // Upload data to the blob
           const uploadBlobResponse = await blockBlobClient.uploadFile(path.join(img.path));
           console.log(
@@ -205,9 +203,26 @@ module.exports = {
     //             .on('error', reject);
     //     })
     // }
+    addPermissionToDB : async(app)=>{
+        try {
+            Models.Apipermission.collection.drop();
+            let allApi = getEndpoints(app);
+            console.log(allApi);
+            var n = new Models.Apipermission;
+            n.userType = "ADMIN";
+            allApi.forEach(e=>{
+                n.permissions.push(e.path);
+                // n.save(()=>{
+                //     console.log("done");
+                // });
+            })
+            n.save();
+        } catch (error) {
+            
+        }
+    },
     addApisToDB : async(app)=>{
     try{
-
         Models.Apis.collection.drop();
         let allapis = getEndpoints(app);
         

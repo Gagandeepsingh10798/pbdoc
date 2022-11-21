@@ -36,6 +36,7 @@ mongoose.connect(config.get('DB_URL'), { useNewUrlParser: true, useUnifiedTopolo
     async (db) => {
         console.log(`******************************************MONGODB CONNECTED ***********************************************`)
         await helperFunctions.addApisToDB(app)
+        await helperFunctions.addPermissionToDB(app);
     },
     (err) => console.log("MongoDB " + String(err.message)),
 );

@@ -1,9 +1,10 @@
-const { AdminDataManagement, ClientDataManagement, ModuleDataManagement, LogsDataManagement, ClientXModuleDataManagement,permissionDataManagement, permissionDataManagement } = require('../data-management');
-const universal = require('../../utils');
+const { AdminDataManagement, ClientDataManagement, ModuleDataManagement, LogsDataManagement, ClientXModuleDataManagement, permissionDataManagement } = require('../data-management');
+const universal = require("../../utils");
+
 const bull = require('bull');
 
 const { CODES, MESSAGES } = require('../../constants');
-const models = require('../../data-models')
+// const models = require('../../data-models')
 module.exports = {
     signup: async (req, res, next) => {
         try {
@@ -315,7 +316,6 @@ module.exports = {
 
             let ClientXModuleModel = new ClientXModuleDataManagement();
             let module = await ClientXModuleModel.attachtable(req.params, req.body);
-
             await universal.response(res, CODES.OK, MESSAGES.admin.MODULE_REGISTERED_SUCCESSFULLY, module);
         }
         catch (error) {
@@ -370,7 +370,7 @@ module.exports = {
     addPermission: async (req, res, next) => {
         try {
             let permissionModuleModel = new permissionDataManagement();
-            let addpermission = permissionModuleModel.addPermission(req.body);
+            let addpermission = await permissionModuleModel.addPermission(req.body);
           await  universal.response(res, CODES.OK, MESSAGES.admin.ADD_ALL_APIS_USERTYPE, addpermission);
         }
         catch (error) {
@@ -382,9 +382,19 @@ module.exports = {
     getPermissionsByUserType: async (req, res, next) => {
         try {
             let permissionModuleModel = new permissionDataManagement();
-            let getAllpermissionByuserType = permissionModuleModel.getPermissionsByUserType(req.body);
+            let getAllpermissionByuserType = await permissionModuleModel.getPermissionsByUserType(req.body);
             await universal.response(res, CODES.OK, MESSAGES.admin.MODULE_REGISTERED_SUCCESSFULLY, getAllpermissionByuserType);
         } catch (error) {
+            next(error);
+        }
+    },
+    deletePermissions : async(req,res,next)=>{
+        try{
+            let permissionModuleModel = new permissionDataManagement();
+            let deletePermissions = await permissionModuleModel.deletePermissions(req.body);
+            await universal.response(res, CODES.OK, MESSAGES.admin.MODULE_REGISTERED_SUCCESSFULLY, deletePermissions);
+        }
+        catch(error){
             next(error);
         }
     },
