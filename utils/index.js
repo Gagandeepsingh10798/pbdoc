@@ -175,7 +175,7 @@ module.exports = {
         catch (err) {
           console.log(`Error: ${err.message}`);
         }
-      }
+      },
     // getStatus: (statusString) => {
     //     const status = {
     //         "NOT ACCEPTED": 0,
