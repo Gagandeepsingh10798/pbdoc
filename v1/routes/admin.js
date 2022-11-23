@@ -22,20 +22,20 @@ router.put('/profile',validations.admin.isAdminValid,upload.single("profilePic")
 /*
 Client APIs
 */
-router.post('/client',validations.admin.validateCreateCLient,controllers.admin.createClient);
-router.get('/client',controllers.admin.getClient);
-router.get('/client/:id',controllers.admin.getClientbyid);
+router.post('/client',validations.admin.isAdminValid,validations.admin.validateCreateCLient,controllers.admin.createClient);
+router.get('/client',validations.admin.isAdminValid,controllers.admin.getClient);
+router.get('/client/:id',validations.admin.isAdminValid,controllers.admin.getClientbyid);
 router.put('/client/:id',validations.admin.isAdminValid,validations.admin.updateCreateCLient,controllers.admin.updateClient);
 router.delete('/client/:id',controllers.admin.deleteClient);
 
 /*
 Module APIs
 */
-router.post('/module',validations.admin.validateCreateModule,controllers.admin.createModule);
-router.get('/module',controllers.admin.getModule);
-router.get('/module/:id',controllers.admin.getModulebyid);
-router.put('/module/:id',validations.admin.validateUpdateModule,controllers.admin.updateModule);
-router.delete('/module/:id',controllers.admin.deleteModule);
+router.post('/module',validations.admin.isAdminValid,validations.admin.validateCreateModule,controllers.admin.createModule);
+router.get('/module',validations.admin.isAdminValid,controllers.admin.getModule);
+router.get('/module/:id',validations.admin.isAdminValid,controllers.admin.getModulebyid);
+router.put('/module/:id',validations.admin.isAdminValid,validations.admin.validateUpdateModule,controllers.admin.updateModule);
+router.delete('/module/:id',validations.admin.isAdminValid,controllers.admin.deleteModule);
 
 /*
 Logs APIs
