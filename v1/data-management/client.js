@@ -62,7 +62,6 @@ const ClientDataManagement = function () {
       //
       await validations.validatequeryClient(queryData);
       const { limit, page } = queryData;
-    
       var limits = limit ? +limit : 10;
       var skip = page ? (page - 1) * limits : 0;
       let client = await ClientModel.find({}, PROJECTIONS.createClient).lean();
