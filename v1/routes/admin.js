@@ -53,15 +53,13 @@ router.put('/modules/detach/:clientid',controllers.admin.deletebyclientid);
 /*
 Store Api's to database
 */
-router.get('/apis',validations.admin.validateLogin,controllers.admin.getAllApi);
-router.post('/permissions',controllers.admin.addPermission)
+router.get('/apis',controllers.admin.getAllApi);
+router.post('/permissions',controllers.admin.addPermission);
 router.get('/permissions',controllers.admin.getPermissionsByUserType);
 router.delete('/permissions',controllers.admin.deletePermissions);
 /*
  Send Notification to Clients
 */
-
-router.post('/sendNotifcation',controllers.admin.sendNotifications);
 router.post('/notify',controllers.admin.notification);
 
 module.exports = router;

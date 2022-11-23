@@ -52,9 +52,12 @@ const ModuleDataManagement = function () {
       }
       let modulePayload = await new ModuleModel(moduleData).save();
       modulePayload = await ModuleModel.findOne({ _id: modulePayload._id },PROJECTIONS.createModule).lean();
+      if(moduleData.visFlow)
+      {
       moduleData.visFlow.moduleId = modulePayload._id;
       let moduleVisFlow = await new VisModel(moduleData.visFlow).save();
       modulePayload.visFlow = moduleVisFlow;
+      }
       return modulePayload;
     } catch (err) {
       throw err;

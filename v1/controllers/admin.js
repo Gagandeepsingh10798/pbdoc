@@ -402,17 +402,6 @@ module.exports = {
             next(error);
         }
     },
-    sendNotifications: async(req,res,next)=>{
-        try{
-            let ClientModel = new ClientDataManagement();
-            let client = await ClientModel.getClient(req.query);
-
-            await universal.response(res, CODES.OK, MESSAGES.admin.GETCLIENT_REGISTERED_SUCCESSFULLY, client);
-        }catch(err)
-        {
-            next(err);
-        }
-    },
     notification: async (req, res, next) => {
         
             try {
