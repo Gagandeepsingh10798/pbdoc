@@ -3,5 +3,6 @@ module.exports = {
     ClientDataManagement:require("./client"),
     ModuleDataManagement:require("./module"),
     LogsDataManagement:require('./logs'),
-    ClientXModuleDataManagement:require('./clientXmodule')
+    ClientXModuleDataManagement:require('./clientXmodule'),
+    permissionDataManagement: require('./permission'),
 };

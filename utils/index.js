@@ -9,6 +9,8 @@ const { DefaultAzureCredential } = require("@azure/identity");
 const { BlobServiceClient } = require("@azure/storage-blob");
 const { Blob } = require('buffer');
 const { v1: uuidv1 } = require("uuid");
+const Models = require('../data-models');
+const {getEndpoints} = require('express-routes');
 // const fs = require("fs");
 const path = require("path");
 // const ffmpeg = require('fluent-ffmpeg')
@@ -123,7 +125,6 @@ module.exports = {
     },
      uploadImage : async function(profile)  {
         try {
-            
           var img = profile;
           console.log("udemy",img);
           const promise = fs.promises.readFile(path.join(img.path));
@@ -150,7 +151,6 @@ module.exports = {
           console.log(
             `\nUploading to Azure storage as blob\n\tname: ${blobName}:\n\tURL: ${blockBlobClient.url}`
           );
-      
           // Upload data to the blob
           const uploadBlobResponse = await blockBlobClient.uploadFile(path.join(img.path));
           console.log(
@@ -173,7 +173,7 @@ module.exports = {
         catch (err) {
           console.log(`Error: ${err.message}`);
         }
-      }
+      },
     // getStatus: (statusString) => {
     //     const status = {
     //         "NOT ACCEPTED": 0,
@@ -203,4 +203,41 @@ module.exports = {
     //             .on('error', reject);
     //     })
     // }
+    addPermissionToDB : async(app)=>{
+        try {
+            Models.Apipermission.collection.drop();
+            let allApi = getEndpoints(app);
+            console.log(allApi);
+            var n = new Models.Apipermission;
+            n.userType = "ADMIN";
+            allApi.forEach(e=>{
+                n.permissions.push(e.path);
+                // n.save(()=>{
+                //     console.log("done");
+                // });
+            })
+            n.save();
+        } catch (error) {
+            
+        }
+    },
+    addApisToDB : async(app)=>{
+    try{
+        Models.Apis.collection.drop();
+        let allapis = getEndpoints(app);
+        
+        allapis.forEach(e=>{
+            var x = e.path;
+            var n = new Models.Apis;
+            n.path = e.path;
+            n.methods = e.methods;
+            n.name = x.substring(8),
+            n.isDeleted = false,
+            n.save()
+        })   
+    }catch(error)
+    {
+        throw error;
+    }
+    }
 };

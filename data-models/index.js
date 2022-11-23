@@ -6,5 +6,7 @@ module.exports = {
     modules: require('./modules'),
     logs:require('./logs'),
     Apipermission:require('./Apipermission'),
-    clientXmodules:require('./clientXmodule')
+    clientXmodules:require('./clientXmodule'),
+    Apis : require('./Api'),
+  
 };

@@ -2,9 +2,8 @@ const router = require("express").Router();
 const controllers = require('../controllers');
 const validations = require('../validations');
 const permission = require("../permission/permission");
-const Apipermission = require("../../data-models/Apipermission");
-const { CLIENTS_NOT_EXIST } = require("../../langs/en");
 const {upload} = require('../multer/multer');
+const { collection } = require("../../data-models/otp");
 /*
 On-Boarding
 */
@@ -47,5 +46,16 @@ router.post('/module/attach/:clientid',controllers.admin.attachtable);
 router.get('/modules/:clientid',controllers.admin.getattachtable);
 router.get('/module/clients/:moduleId',controllers.admin.getModuleAttach);
 router.put('/modules/detach/:clientid',controllers.admin.deletebyclientid);
+/*
+Store Api's to database
+*/
+router.get('/apis',validations.admin.validateLogin,controllers.admin.getAllApi);
+router.post('/permissions',controllers.admin.addPermission)
+router.get('/permissions',controllers.admin.getPermissionsByUserType);
+router.delete('/permissions',controllers.admin.deletePermissions);
+/*
+ Send Notification to Clients
+*/
 
+router.post('/sendNotifcation',controllers.admin.sendNotifications);
 module.exports = router;

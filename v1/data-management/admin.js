@@ -14,9 +14,10 @@ const AdminDataManagement = function () {
   const AdminModel = Models.user;
   const AuthTokenModel = Models.authToken;
   const OtpModel = Models.otp;
-
+    
   this.createAdmin = async (profile, adminData) => {
     try {
+            console.log(profile);
       await validations.validateCreateAdmin(adminData);
       const { email, phone, countryCode } = adminData;
       let userType = await config.get("USER_TYPES").ADMIN;
@@ -25,6 +26,7 @@ const AdminDataManagement = function () {
         email,
         isDeleted: false,
       }).lean();
+            console.log(userExists);
       if (userExists) {
         await unlinkAsync(profile.path);
         throw new Error(
