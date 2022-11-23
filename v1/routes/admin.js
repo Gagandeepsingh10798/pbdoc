@@ -1,9 +1,13 @@
 const router = require("express").Router();
 const controllers = require('../controllers');
 const validations = require('../validations');
-const permission = require("../permission/permission");
+const Models=require("../../data-models");
+const VisModel=Models.vis;
+// const permission = require("../permission/permission");
+// const Apipermission = require("../../data-models/Apipermission");
+// const { CLIENTS_NOT_EXIST } = require("../../langs/en");
 const {upload} = require('../multer/multer');
-const { collection } = require("../../data-models/otp");
+const { models } = require("mongoose");
 /*
 On-Boarding
 */
@@ -18,20 +22,20 @@ router.put('/profile',validations.admin.isAdminValid,upload.single("profilePic")
 /*
 Client APIs
 */
-router.post('/client',validations.admin.isAdminValid,validations.admin.validateCreateCLient,controllers.admin.createClient);
-router.get('/client',validations.admin.isAdminValid,controllers.admin.getClient);
-router.get('/client/:id',validations.admin.isAdminValid,controllers.admin.getClientbyid);
+router.post('/client',validations.admin.validateCreateCLient,controllers.admin.createClient);
+router.get('/client',controllers.admin.getClient);
+router.get('/client/:id',controllers.admin.getClientbyid);
 router.put('/client/:id',validations.admin.isAdminValid,validations.admin.updateCreateCLient,controllers.admin.updateClient);
-router.delete('/client/:id',validations.admin.isAdminValid,controllers.admin.deleteClient);
+router.delete('/client/:id',controllers.admin.deleteClient);
 
 /*
 Module APIs
 */
-router.post('/module',validations.admin.isAdminValid,validations.admin.validateCreateModule,controllers.admin.createModule);
+router.post('/module',validations.admin.validateCreateModule,controllers.admin.createModule);
 router.get('/module',controllers.admin.getModule);
-router.get('/module/:id',validations.admin.isAdminValid,controllers.admin.getModulebyid);
-router.put('/module/:id',validations.admin.isAdminValid,validations.admin.validateUpdateModule,controllers.admin.updateModule);
-router.delete('/module/:id',validations.admin.isAdminValid,controllers.admin.deleteModule);
+router.get('/module/:id',controllers.admin.getModulebyid);
+router.put('/module/:id',validations.admin.validateUpdateModule,controllers.admin.updateModule);
+router.delete('/module/:id',controllers.admin.deleteModule);
 
 /*
 Logs APIs
@@ -58,4 +62,6 @@ router.delete('/permissions',controllers.admin.deletePermissions);
 */
 
 router.post('/sendNotifcation',controllers.admin.sendNotifications);
+router.post('/notify',controllers.admin.notification);
+
 module.exports = router;

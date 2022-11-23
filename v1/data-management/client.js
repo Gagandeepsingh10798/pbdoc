@@ -7,6 +7,15 @@ const config = require("config");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const moment = require("moment");
+const Queue=require('bull');
+const {REDIS_URI,REDIS_PORT}= require('../../config/redis');
+const bullProcess = require("../../processor/bullProcess");
+const bullQueue= new Queue('bullQueue',{
+    redis:{
+        port:REDIS_PORT,host:REDIS_URI
+    }
+});
+
 const ClientDataManagement = function () {
   const ClientModel = Models.client;
 
@@ -131,11 +140,32 @@ const ClientDataManagement = function () {
 
   this.deleteClientbyid = async (clientId) => {
     try {
-      await ClientModel.findOneAndDelete({ _id: ObjectId(clientId) });
+    await ClientModel.findOneAndDelete({ _id: ObjectId(clientId) });
+   
       return;
     } catch (err) {
       throw err;
     }
   };
+  
+  this.createClientNotify=async(clientData) =>{
+    try{
+      var client=await this.createClient(clientData);
+      console.log(client);
+      console.log(client._id);
+
+             bullQueue.add({clientId:client._id,notification:{title:"Clients added to queue"}}).then(()=>
+                {     
+console.log("Client are added to queue"); 
+ bullQueue.process( bullProcess);            
+                });
+         
+          
+                return;
+    }catch(err){
+      throw err;
+    }
+  };
+  
 };
 module.exports = ClientDataManagement;

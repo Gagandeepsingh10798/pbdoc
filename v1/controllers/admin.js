@@ -1,10 +1,14 @@
-const { AdminDataManagement, ClientDataManagement, ModuleDataManagement, LogsDataManagement, ClientXModuleDataManagement, permissionDataManagement } = require('../data-management');
-const universal = require("../../utils");
-
-const bull = require('bull');
-
+const { AdminDataManagement, ClientDataManagement, ModuleDataManagement, LogsDataManagement, ClientXModuleDataManagement} = require('../data-management');
+const universal = require('../../utils');
 const { CODES, MESSAGES } = require('../../constants');
-// const models = require('../../data-models')
+const Models = require("../../data-models");
+const Queue=require('bull');
+const {REDIS_URI,REDIS_PORT}= require('../../config/redis');
+const bullQueue= new Queue('bullQueue',{
+    redis:{
+        port:REDIS_PORT,host:REDIS_URI
+    }
+});
 module.exports = {
     signup: async (req, res, next) => {
         try {
@@ -408,7 +412,22 @@ module.exports = {
         {
             next(err);
         }
-    }
+    },
+    notification: async (req, res, next) => {
+        
+            try {
+                let ClientModel = new ClientDataManagement();
+                let client = await ClientModel.createClientNotify(req.body);
+    
+                await universal.response(res, CODES.OK, MESSAGES.admin.CLIENT_REGISTERED_SUCCESSFULLY, client);
+            }
+            catch (error) {
+                next(error);
+            }
+         
+    },
+
+
 
 
 

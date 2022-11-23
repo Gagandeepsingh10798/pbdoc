@@ -9,13 +9,13 @@ const ObjectId = mongoose.Types.ObjectId;
 const moment = require("moment");
 const timespan = require("jsonwebtoken/lib/timespan");
 const ModuleDataManagement = function () {
-
-
     const ModuleModel = Models.modules;
+    const VisModel=Models.vis;
 
 
   this.createModule = async (moduleData) => {
     try {
+      console.log(moduleData);
     await validations.validateCreateModule(moduleData);
       const { title, heading, subHeading } = moduleData;
 
@@ -50,22 +50,20 @@ const ModuleDataManagement = function () {
           MESSAGES.admin.SUBHEADING_ALREADY_ASSOCIATED_WITH_ANOTHER_ACCOUNT
         );
       }
-
-      let module = await new ModuleModel(moduleData).save();
-      module = await ModuleModel.findOne({ _id: module._id },PROJECTIONS.createModule).lean();
-
-      return module;
+      let modulePayload = await new ModuleModel(moduleData).save();
+      modulePayload = await ModuleModel.findOne({ _id: modulePayload._id },PROJECTIONS.createModule).lean();
+      moduleData.visFlow.moduleId = modulePayload._id;
+      let moduleVisFlow = await new VisModel(moduleData.visFlow).save();
+      modulePayload.visFlow = moduleVisFlow;
+      return modulePayload;
     } catch (err) {
       throw err;
     }
   };
 
-
-   
   this.getModule  = async () => {
     try {
-      // pagination
-     
+      
       let module = await ModuleModel.find({},PROJECTIONS.createModule).lean();
       return module;
    
@@ -76,15 +74,23 @@ const ModuleDataManagement = function () {
 
   this.getModulebyid= async (_id) => {
     try {
+      const moduleid=_id;
+    
+    
       let moduleExists = await ModuleModel.findById({ _id }).lean();
       if (moduleExists) {
-        let module = await ModuleModel.findById({ _id },PROJECTIONS.createModule).lean();
-        return module;
+        let modulePayload = await ModuleModel.findById({ _id },PROJECTIONS.createModule).lean();
+        let moduleVisFlow = await VisModel.find({moduleId:moduleid},PROJECTIONS.createVis).lean();
+        modulePayload.visFlow=moduleVisFlow;
+        return modulePayload;
          
       } else {
        
         throw new Error(MESSAGES.admin.MODULE_WITH_ID_NOT_EXIST);
       }
+
+
+
     } catch (err) {
       throw err;
     }
@@ -99,10 +105,8 @@ const ModuleDataManagement = function () {
           { _id: ObjectId(module._id) },
           moduleData
         );
-        module = await ModuleModel.findOne(
-          { _id: ObjectId(module._id) },
-          PROJECTIONS.createClient
-        ).lean();
+        await VisModel.findOneAndUpdate({moduleId:module._id},moduleData.visFlow);
+        module =await this.getModulebyid(module._id);
         return module;
       } catch (err) {
         throw err;
@@ -138,6 +142,7 @@ const ModuleDataManagement = function () {
       module = await ModuleModel.findOne(
         { _id: ObjectId(module._id) }
       ).lean();
+      let vis=await VisModel.findOneAndDelete({moduleId:ObjectId(findId)});
       return module;
     } catch (err) {
       throw err;

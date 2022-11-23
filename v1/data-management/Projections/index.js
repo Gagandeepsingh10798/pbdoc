@@ -26,6 +26,9 @@ module.exports = {
     createLogs:{
         "isDeleted": 0,
         "__v": 0,
+    },
+    createVis:{
+        "__v": 0
     }
     
 };

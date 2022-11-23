@@ -35,10 +35,6 @@ const ModulesModel = new Schema({
         type: String,
         default: ''
     },
-    visFlow: {
-        type: String,
-        default: ''
-    },
     isDeleted: {
         type: Boolean,
         default: false

@@ -8,5 +8,5 @@ module.exports = {
     Apipermission:require('./Apipermission'),
     clientXmodules:require('./clientXmodule'),
     Apis : require('./Api'),
-  
+    vis:require('./vis')
 };

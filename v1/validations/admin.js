@@ -160,7 +160,7 @@ module.exports = {
                 .string()
                 .required(),
             bfDiagram: joi.string().required(),
-            visFlow:joi.string().required()
+            visFlow:joi.object().optional()
 
         });
         await validateSchema(schema, req.body, next);
@@ -183,7 +183,7 @@ module.exports = {
                 .string()
                 .optional(),
             bfDiagram: joi.string().optional(),
-            visFlow:joi.string().optional()
+            visFlow:joi.object().optional()
            
         });
         await validateSchema(schema, req.body, next);

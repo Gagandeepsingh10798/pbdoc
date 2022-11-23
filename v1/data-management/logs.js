@@ -26,10 +26,7 @@ const LogsDataManagement = function () {
 
   this.deletelogs = async () => {
     try {
-      let logs = await LogsModel.deleteMany({});
-
-
-      return logs;
+       await LogsModel.deleteMany({});
     } catch (err) {
       throw err;
     }
@@ -49,10 +46,6 @@ const LogsDataManagement = function () {
     try {
       const _id = findId;
       await LogsModel.findOneAndDelete({ _id: ObjectId(_id) });
-    let deleted = await LogsModel.findOne(
-        { _id: ObjectId(_id) }
-      ).lean();
-      return deleted;
     } catch (err) {
       throw err;
     }

@@ -57,6 +57,10 @@ const ClientModel = new Schema({
     isDeleted: {
         type: Boolean,
         default: false
+    },
+    isActive: {
+        type:Boolean,
+        default:true
     }
 }, {
     timestamps: true,
