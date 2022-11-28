@@ -9,14 +9,14 @@ const ObjectId = mongoose.Types.ObjectId;
 const moment = require("moment");
 const timespan = require("jsonwebtoken/lib/timespan");
 const ModuleDataManagement = function () {
-    const ModuleModel = Models.modules;
-    const VisModel=Models.vis;
+  const ModuleModel = Models.modules;
+  const VisModel = Models.vis;
 
 
-  this.createModule = async (moduleData) => {
+  this.createModule = async (businessDocument, moduleData) => {
+    let businessDocumentUploaded = false;
     try {
-      console.log(moduleData);
-    await validations.validateCreateModule(moduleData);
+      await validations.validateCreateModule(moduleData);
       const { title, heading, subHeading } = moduleData;
 
       let moduleExists = await ModuleModel.findOne({
@@ -29,66 +29,57 @@ const ModuleDataManagement = function () {
         );
       }
 
-
-      moduleExists = await ModuleModel.findOne({
-       heading,
-        isDeleted: false,
-      }).lean();
-      if (moduleExists) {
-        throw new Error(
-          MESSAGES.admin.HEADING_ALREADY_ASSOCIATED_WITH_ANOTHER_ACCOUNT
-        );
+      if (businessDocument) {
+        moduleData.businessDocument = await universal.uploadFile(businessDocument);
+        businessDocumentUploaded = true;
       }
 
-      moduleExists = await ModuleModel.findOne({
-        subHeading,
-         isDeleted: false,
-       }).lean();
-
-      if (moduleExists) {
-        throw new Error(
-          MESSAGES.admin.SUBHEADING_ALREADY_ASSOCIATED_WITH_ANOTHER_ACCOUNT
-        );
-      }
       let modulePayload = await new ModuleModel(moduleData).save();
-      modulePayload = await ModuleModel.findOne({ _id: modulePayload._id },PROJECTIONS.createModule).lean();
-      if(moduleData.visFlow)
-      {
-      moduleData.visFlow.moduleId = modulePayload._id;
-      let moduleVisFlow = await new VisModel(moduleData.visFlow).save();
-      modulePayload.visFlow = moduleVisFlow;
+      modulePayload = await ModuleModel.findOne({ _id: modulePayload._id }, PROJECTIONS.createModule).lean();
+      if (!moduleData.visFlow) {
+        moduleData.visFlow = {
+          moduleId: modulePayload._id,
+          nodes: [],
+          edges:
+        };
+        moduleData.visFlow.moduleId = modulePayload._id;
+        let moduleVisFlow = await new VisModel(moduleData.visFlow).save();
+        modulePayload.visFlow = moduleVisFlow;
       }
       return modulePayload;
     } catch (err) {
+      if (businessDocumentUploaded && moduleData.businessDocument) {
+        await universal.deleteFile(moduleData.businessDocument);
+      }
       throw err;
     }
   };
 
-  this.getModule  = async () => {
+  this.getModule = async () => {
     try {
-      
-      let module = await ModuleModel.find({},PROJECTIONS.createModule).lean();
+
+      let module = await ModuleModel.find({}, PROJECTIONS.createModule).lean();
       return module;
-   
+
     } catch (err) {
       throw err;
     }
   };
 
-  this.getModulebyid= async (_id) => {
+  this.getModulebyid = async (_id) => {
     try {
-      const moduleid=_id;
-    
-    
+      const moduleid = _id;
+
+
       let moduleExists = await ModuleModel.findById({ _id }).lean();
       if (moduleExists) {
-        let modulePayload = await ModuleModel.findById({ _id },PROJECTIONS.createModule).lean();
-        let moduleVisFlow = await VisModel.find({moduleId:moduleid},PROJECTIONS.createVis).lean();
-        modulePayload.visFlow=moduleVisFlow;
+        let modulePayload = await ModuleModel.findById({ _id }, PROJECTIONS.createModule).lean();
+        let moduleVisFlow = await VisModel.find({ moduleId: moduleid }, PROJECTIONS.createVis).lean();
+        modulePayload.visFlow = moduleVisFlow;
         return modulePayload;
-         
+
       } else {
-       
+
         throw new Error(MESSAGES.admin.MODULE_WITH_ID_NOT_EXIST);
       }
 
@@ -99,21 +90,21 @@ const ModuleDataManagement = function () {
     }
   };
 
-  this.updateModulebyid= async (findId,moduleData) => {
+  this.updateModulebyid = async (findId, moduleData) => {
     try {
 
-        await validations.validateUpdateModule(moduleData);
-        let module = await this.checkModuleExists(findId);
-        await ModuleModel.findOneAndUpdate(
-          { _id: ObjectId(module._id) },
-          moduleData
-        );
-        await VisModel.findOneAndUpdate({moduleId:module._id},moduleData.visFlow);
-        module =await this.getModulebyid(module._id);
-        return module;
-      } catch (err) {
-        throw err;
-      }
+      await validations.validateUpdateModule(moduleData);
+      let module = await this.checkModuleExists(findId);
+      await ModuleModel.findOneAndUpdate(
+        { _id: ObjectId(module._id) },
+        moduleData
+      );
+      await VisModel.findOneAndUpdate({ moduleId: module._id }, moduleData.visFlow);
+      module = await this.getModulebyid(module._id);
+      return module;
+    } catch (err) {
+      throw err;
+    }
 
   };
 
@@ -122,16 +113,16 @@ const ModuleDataManagement = function () {
   this.checkModuleExists = async (findId) => {
     try {
       let isExists = false;
-  
-      const _id  = findId;
- 
+
+      const _id = findId;
+
       if (_id) {
         isExists = await ModuleModel.findOne(
           { _id: ObjectId(_id), isDeleted: false }
         ).lean();
       }
       if (!isExists) throw new Error(MESSAGES.admin.MODULE_WITH_ID_NOT_EXIST);
-     
+
       return isExists;
     } catch (err) {
       throw err;
@@ -145,7 +136,7 @@ const ModuleDataManagement = function () {
       module = await ModuleModel.findOne(
         { _id: ObjectId(module._id) }
       ).lean();
-      let vis=await VisModel.findOneAndDelete({moduleId:ObjectId(findId)});
+      let vis = await VisModel.findOneAndDelete({ moduleId: ObjectId(findId) });
       return module;
     } catch (err) {
       throw err;

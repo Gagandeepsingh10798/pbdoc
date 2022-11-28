@@ -3,36 +3,44 @@ const validations = require("./validations");
 const PROJECTIONS = require("./Projections");
 const { MESSAGES } = require("../../constants");
 const universal = require("../../utils");
-const fs = require("fs");
 const config = require("config");
-const mongoose = require("mongoose");
-const ObjectId = mongoose.Types.ObjectId;
+const ObjectId = require("mongoose").Types.ObjectId;
 const moment = require("moment");
-const { promisify } = require("util");
-const unlinkAsync = promisify(fs.unlink);
 const AdminDataManagement = function () {
   const AdminModel = Models.user;
+  const AdminDetailsModel = Models.adminDetails;
   const AuthTokenModel = Models.authToken;
   const OtpModel = Models.otp;
-    
-  this.createAdmin = async (profile, adminData) => {
+
+  this.createAdmin = async (profilePic, adminData) => {
+    let profilePicUploaded = false;
     try {
-            console.log(profile);
       await validations.validateCreateAdmin(adminData);
-      const { email, phone, countryCode } = adminData;
+      const { email, phone, countryCode, userName } = adminData;
       let userType = await config.get("USER_TYPES").ADMIN;
+
       let userExists = await AdminModel.findOne({
+        userName,
+        isDeleted: false,
+      }).lean();
+      if (userExists) {
+        throw new Error(
+          MESSAGES.admin.USERNAME_ALREADY_EXISTS
+        );
+      }
+
+
+      userExists = await AdminModel.findOne({
         type: userType,
         email,
         isDeleted: false,
       }).lean();
-            console.log(userExists);
       if (userExists) {
-        await unlinkAsync(profile.path);
         throw new Error(
           MESSAGES.admin.EMAIL_ALREADY_ASSOCIATED_WITH_ANOTHER_ACCOUNT
         );
       }
+
       userExists = await AdminModel.findOne({
         type: userType,
         phone,
@@ -40,22 +48,31 @@ const AdminDataManagement = function () {
         isDeleted: false,
       }).lean();
       if (userExists) {
-        await unlinkAsync(profile.path);
         throw new Error(
           MESSAGES.admin.PHONE_NUMBER_ALREADY_ASSOCIATED_WITH_ANOTHER_ACCOUNT
         );
       }
 
-      adminData.profilePic = await universal.uploadImage(profile);
+      if (profilePic) {
+        adminData.profilePic = await universal.uploadFile(profilePic);
+        profilePicUploaded = true;
+      }
+
       adminData.type = userType;
-      adminData.password = await universal.hashPasswordUsingBcrypt(
-        adminData.password
-      );
+      adminData.password = await universal.hashPasswordUsingBcrypt(adminData.password);
+
       let admin = await new AdminModel(adminData).save();
       admin = await AdminModel.findOne(
         { _id: admin._id },
         PROJECTIONS.createAdmin
       ).lean();
+      adminData.userId = admin._id;
+      let adminDetails = await new AdminDetailsModel(adminData).save();
+      adminDetails = await AdminDetailsModel.findOne(
+        { userId: admin._id },
+        PROJECTIONS.createAdmin
+      ).lean();
+
       let authTokenPayload = {
         token: await universal.createAuthToken({ _id: admin._id }),
         refreshToken: await universal.createRefreshToken({ _id: admin._id }),
@@ -66,17 +83,22 @@ const AdminDataManagement = function () {
         token: authTokenPayload.token,
         refreshToken: authTokenPayload.refreshToken,
       };
+      admin = {
+        ...adminDetails,
+        ...admin
+      };
       return admin;
     } catch (err) {
+      if (profilePicUploaded && profilePic) {
+        await universal.deleteFile(adminData.profilePic);
+      }
       throw err;
     }
   };
 
   this.checkAdminExists = async (adminData, isLogin) => {
     try {
-      const Projection = isLogin
-        ? PROJECTIONS.createAdminWithPassword
-        : PROJECTIONS.createAdmin;
+      const Projection = isLogin ? PROJECTIONS.createAdminWithPassword : PROJECTIONS.createAdmin;
       await validations.validateCheckAdminExists(adminData);
       let isExists = false;
       let userType = await config.get("USER_TYPES").ADMIN;
@@ -99,6 +121,11 @@ const AdminDataManagement = function () {
       }
 
       if (!isExists) throw new Error(MESSAGES.admin.ADMIN_NOT_EXIST);
+      let adminDetails = await AdminDetailsModel.findOne({ userId: isExists._id }, Projection).lean();
+      isExists = {
+        ...adminDetails,
+        ...isExists
+      };
       return isExists;
     } catch (err) {
       throw err;
@@ -114,7 +141,7 @@ const AdminDataManagement = function () {
           adminData.password
         );
       }
-      await AdminModel.findOneAndUpdate(
+      await AdminDetailsModel.findOneAndUpdate(
         { _id: ObjectId(admin._id) },
         adminData
       );
@@ -122,6 +149,14 @@ const AdminDataManagement = function () {
         { _id: ObjectId(admin._id) },
         PROJECTIONS.createAdmin
       ).lean();
+      let adminDetails = await AdminDetailsModel.findOne(
+        { userId: ObjectId(admin._id) },
+        PROJECTIONS.createAdmin
+      ).lean();
+      admin = {
+        ...adminDetails,
+        ...admin
+      };
       return admin;
     } catch (err) {
       throw err;
@@ -214,19 +249,33 @@ const AdminDataManagement = function () {
   };
 
   this.updateProfileById = async (updatePayload, userPayload) => {
+    let profilePicUploaded = false;
     try {
       let userId = ObjectId(userPayload._id);
-      if (updatePayload.profilePic)
-        await universal.deleteFilesByPath(userPayload.profilePic);
+      if (updatePayload.profilePic) {
+        if (userPayload.profilePic) {
+          await universal.deleteFile(userPayload.profilePic);
+        }
+        updatePayload.profilePic = await universal.uploadFile(updatePayload.profilePic);
+        profilePicUploaded = true;
+      }
       await AdminModel.findOneAndUpdate({ _id: userId }, updatePayload);
-      return await AdminModel.findOne(
-        { _id: userId },
-        PROJECTIONS.createClient
-      ).lean();
+      await AdminDetailsModel.findOneAndUpdate({ userId }, updatePayload);
+      let admin = await AdminModel.findOne({ _id: userId }, PROJECTIONS.createAdmin).lean();
+      let adminDetails = await AdminDetailsModel.findOne({ userId }, PROJECTIONS.createAdmin).lean();
+      admin = {
+        ...adminDetails,
+        ...admin
+      };
+      return admin;
     } catch (err) {
+      if (profilePicUploaded && updatePayload.profilePic) {
+        await universal.deleteFile(updatePayload.profilePic);
+      }
       throw err;
     }
   };
+
 };
 
 module.exports = AdminDataManagement;

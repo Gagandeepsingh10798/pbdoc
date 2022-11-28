@@ -2,93 +2,143 @@ const Models = require("../../data-models");
 const validations = require("./validations");
 const PROJECTIONS = require("./Projections");
 const { MESSAGES } = require("../../constants");
-const universal = require("../../utils");
-const config = require("config");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
-const moment = require("moment");
-const Queue=require('bull');
-const {REDIS_URI,REDIS_PORT}= require('../../config/redis');
-const bullProcess = require("../../processor/bullProcess");
-const bullQueue= new Queue('bullQueue',{
-    redis:{
-        port:REDIS_PORT,host:REDIS_URI
-    }
-});
+const config = require("config");
+const universal = require("../../utils");
 
 const ClientDataManagement = function () {
-  const ClientModel = Models.client;
+  const ClientModel = Models.user;
+  const ClientDetailsModel = Models.clientDetails;
+  const AuthTokenModel = Models.authToken;
 
-  this.createClient = async (clientData) => {
+  this.createClient = async (logo, clientData) => {
+    let logoUploaded = false;
     try {
+      let userType = await config.get("USER_TYPES").CLIENT;
       await validations.validateCreateCLient(clientData);
-      const { email, phone, countryCode } = clientData;
+      const { email, phone, countryCode, userName } = clientData;
 
-      let clientExists = await ClientModel.findOne({
-        email,
-        isDeleted: false,
-      }).lean();
+      let clientExists = await ClientModel.findOne({ userName, isDeleted: false, }).lean();
+      if (clientExists) {
+        throw new Error(
+          MESSAGES.admin.USERNAME_ALREADY_EXISTS
+        );
+      }
+
+      clientExists = await ClientModel.findOne({ email, isDeleted: false }).lean();
       if (clientExists) {
         throw new Error(
           MESSAGES.admin.EMAIL_ALREADY_ASSOCIATED_WITH_ANOTHER_ACCOUNT
         );
       }
-      clientExists = await ClientModel.findOne({
-        phone,
-        countryCode,
-        isDeleted: false,
-      }).lean();
+
+      clientExists = await ClientModel.findOne({ phone, countryCode, isDeleted: false, }).lean();
       if (clientExists) {
         throw new Error(
           MESSAGES.admin.PHONE_NUMBER_ALREADY_ASSOCIATED_WITH_ANOTHER_ACCOUNT
         );
       }
 
-      let client = await new ClientModel(clientData).save();
+      if (logo) {
+        clientData.logo = await universal.uploadFile(logo);
+        logoUploaded = true;
+      }
 
-      client = await ClientModel.findOne(
-        { _id: client._id },
-        PROJECTIONS.createClient
-      ).lean();
+      clientData.type = userType;
+      clientData.password = await universal.hashPasswordUsingBcrypt(clientData.password);
+
+      let client = await new ClientModel(clientData).save();
+      client = await ClientModel.findOne({ _id: client._id }, PROJECTIONS.createAdmin).lean();
+
+      clientData.userId = client._id;
+
+      let clientDetails = await new ClientDetailsModel(clientData).save();
+      clientDetails = await ClientDetailsModel.findOne({ userId: client._id }, PROJECTIONS.createAdmin).lean();
+
+      let authTokenPayload = {
+        token: await universal.createAuthToken({ _id: client._id }),
+        refreshToken: await universal.createRefreshToken({ _id: client._id }),
+        user: client._id,
+      };
+      await new AuthTokenModel(authTokenPayload).save();
+
+      client.authorization = {
+        token: authTokenPayload.token,
+        refreshToken: authTokenPayload.refreshToken,
+      };
+
+      client = {
+        ...clientDetails,
+        ...client
+      };
 
       return client;
     } catch (err) {
+      if (logoUploaded && clientData.logo) {
+        await universal.deleteFile(clientData.logo);
+      }
       throw err;
     }
   };
 
-  this.getClient = async (queryData) => {
+  this.getClients = async (queryData) => {
     try {
-      //
-      await validations.validatequeryClient(queryData);
-      const { limit, page } = queryData;
-      var limits = limit ? +limit : 10;
-      var skip = page ? (page - 1) * limits : 0;
-      let client = await ClientModel.find({}, PROJECTIONS.createClient).lean();
-      if (client.length > 0) {
-          let clients = await ClientModel.find({}, PROJECTIONS.createClient)
-            .limit(limits)
-            .skip(skip)
-            .lean();
-          return clients;
-        
-      } else {
-        throw new Error(MESSAGES.admin.CLIENTS_NOT_EXIST);
-      }
+      let clients = await ClientDetailsModel.aggregate([
+        {
+          $match: {
+            isDeleted: false
+          }
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "userId",
+            foreignField: "_id",
+            as: "userId",
+          },
+        },
+        {
+          $unwind: "$userId",
+        },
+        {
+          $project: PROJECTIONS.getClients
+        }
+      ]);
+      return clients;
     } catch (err) {
       throw err;
     }
   };
 
-  this.getClientbyid = async (_id) => {
+  this.getClientById = async (_id) => {
     try {
-      let clientExists = await ClientModel.findById({ _id }).lean();
-      if (clientExists) {
-        let client = await ClientModel.findById(
-          { _id },
-          PROJECTIONS.createClient
-        ).lean();
-        return client;
+
+      let clients = await ClientDetailsModel.aggregate([
+        {
+          $match: {
+            isDeleted: false,
+            userId: ObjectId(_id)
+          }
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "userId",
+            foreignField: "_id",
+            as: "userId",
+          },
+        },
+        {
+          $unwind: "$userId",
+        },
+        {
+          $project: PROJECTIONS.getClients
+        }
+      ]);
+
+      if (clients.length) {
+        return clients[0];
       } else {
         throw new Error(MESSAGES.admin.CLIENT_WITH_ID_NOT_EXIST);
       }
@@ -97,74 +147,31 @@ const ClientDataManagement = function () {
     }
   };
 
-  this.updateClientbyid = async (findId, clientData) => {
+  this.updateClientById = async (logo, findId, clientData) => {
+    let logoUploaded = false;
     try {
-      await validations.updateCreateCLient(clientData);
-      let client = await this.checkClientExists(findId);
-      await ClientModel.findOneAndUpdate(
-        { _id: ObjectId(client._id) },
-        clientData
-      );
-      client = await ClientModel.findOne(
-        { _id: ObjectId(client._id) },
-        PROJECTIONS.createClient
-      ).lean();
-      return client;
-    } catch (err) {
-      throw err;
-    }
-  };
+      let userId = ObjectId(findId);
+      let client = await this.getClientById(findId);
+      await ClientModel.findOneAndUpdate({ _id: userId }, clientData);
 
-  this.checkClientExists = async (findId) => {
-    try {
-      let isExists = false;
-
-      const _id = findId;
-
-      if (_id) {
-        isExists = await ClientModel.findOne({
-          _id: ObjectId(_id),
-          isDeleted: false,
-        }).lean();
+      if (logo) {
+        clientData.logo = await universal.uploadFile(logo);
+        logoUploaded = true;
+        if (client.logo) {
+          await universal.deleteFile(client.logo);
+        }
       }
 
-     
-      if (!isExists) throw new Error(MESSAGES.admin.CLIENT_WITH_ID_NOT_EXIST);
-
-      return isExists;
+      await ClientDetailsModel.findOneAndUpdate({ userId }, clientData);
+      client = await this.getClientById(findId);
+      return client;
     } catch (err) {
+      if (logoUploaded && clientData.logo) {
+        await universal.deleteFile(clientData.logo);
+      }
       throw err;
     }
   };
 
-  this.deleteClientbyid = async (clientId) => {
-    try {
-    await ClientModel.findOneAndDelete({ _id: ObjectId(clientId) });
-   
-      return;
-    } catch (err) {
-      throw err;
-    }
-  };
-  
-  this.createClientNotify=async(clientData) =>{
-    try{
-      var client=await this.createClient(clientData);
-      console.log(client);
-      console.log(client._id);
-
-             bullQueue.add({clientId:client._id,notification:{title:"Clients added to queue"}}).then(()=>
-                {     
-console.log("Client are added to queue"); 
- bullQueue.process( bullProcess);            
-                });
-         
-          
-                return;
-    }catch(err){
-      throw err;
-    }
-  };
-  
 };
 module.exports = ClientDataManagement;

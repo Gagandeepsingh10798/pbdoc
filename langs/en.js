@@ -164,5 +164,5 @@ module.exports = {
   CLIENTS_NOT_EXIST:"No Data Exist",
   CLIENT_DELETED_SUCCESSFULLY:"Client Deleted Successfully",
   LOGS_DELETED_SUCCESSFULLY:"Logs Deleted Successfully",
-  MODULE_DELETED_SUCCESSFULLY:"Module Deleted Successfully"
+  USERNAME_ALREADY_EXISTS: "USERNAME_ALREADY_EXISTS",
 };

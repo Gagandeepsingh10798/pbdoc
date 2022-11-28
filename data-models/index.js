@@ -1,7 +1,8 @@
 module.exports = {
     otp: require('./otp'),
-    client: require('./client'),
+    clientDetails: require('./clientDetails'),
     user: require('./user'),
+    adminDetails: require('./adminDetails'),
     authToken: require('./authToken'),
     modules: require('./modules'),
     logs:require('./logs'),

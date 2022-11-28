@@ -2,20 +2,15 @@ const Messages = require('../langs');
 const bcrypt = require('bcryptjs');
 const config = require('config');
 const jwt = require('jsonwebtoken');
-const fs=require("fs");
+const fs = require("fs");
 const { promisify } = require('util');
 const unlinkAsync = promisify(fs.unlink);
-const { DefaultAzureCredential } = require("@azure/identity");
-const { BlobServiceClient } = require("@azure/storage-blob");
-const { Blob } = require('buffer');
-const { v1: uuidv1 } = require("uuid");
+const { BlockBlobClient, BlobServiceClient } = require('@azure/storage-blob');
+const blobServiceClient = BlobServiceClient.fromConnectionString(config.get("AZURE_STORAGE_CONNECTION_STRING"));
+const containerName = config.get("AZURE_STORAGE_CONTAINER_NAME");
+const getStream = require('into-stream');
 const Models = require('../data-models');
-const {getEndpoints} = require('express-routes');
-// const fs = require("fs");
-const path = require("path");
-// const ffmpeg = require('fluent-ffmpeg')
-// const { Parser } = require('json2csv');
-// const csv = require('csv-parser')
+const { MESSAGES } = require('../constants');
 module.exports = {
     /*
     Response Functions
@@ -71,45 +66,11 @@ module.exports = {
             throw error;
         }
     },
-    // /*
-    // Generate Thumbnail Functions
-    // */
-    // generateVideoThumbnail: async (paths, saveLocation) => {
-    //     try {
-    //         ffmpeg(paths)
-    //             .screenshots({
-    //                 filename: paths.split('/')[paths.split('/').length - 1] + "_thumbnail.png",
-    //                 folder: path.join(__dirname, saveLocation),
-    //                 count: 1
-    //             }).on('error', (e) => {
-    //                 console.log({ e })
-    //                 return false
-    //             })
-    //             .on('end', async () => {
-    //                 return true
-    //             })
-    //     } catch (error) {
-    //         throw error;
-    //     }
-    // },
-    // /*
-    // File Functions
-    // */
-
-    // deleteFiles: async (paths) => {
-    //     await paths.forEach(filePath => fs.unlinkSync(path.resolve(__dirname, '..' + filePath)))
-    //     return
-    // },
-    deleteFilesByPath:async(path)=>
-    {
-        if(fs.existsSync(path)){
+    deleteFilesByPath: async (path) => {
+        if (fs.existsSync(path)) {
             await unlinkAsync(path);
         }
     },
-    // /*
-    // Email Service
-    // */
-    // emailService: require('./Email'),
     /*
     Otp
     */
@@ -123,121 +84,87 @@ module.exports = {
             throw error;
         }
     },
-     uploadImage : async function(profile)  {
+    getBlobName: (file) => {
+        const identifier = file.fieldname + '-' + Date.now() + `.${file.originalname.split('.').pop()}`; // remove "0." from start of string
+        return identifier;
+    },
+    uploadFile: async function (file) {
         try {
-          var img = profile;
-          console.log("udemy",img);
-          const promise = fs.promises.readFile(path.join(img.path));
-         console.log(promise);
-                   const accountName = "livedemo1234";
-      
-          const blobServiceClient = new BlobServiceClient(
-            `https://${accountName}.blob.core.windows.net`,
-            new DefaultAzureCredential()
-          );
-         
-          // Create a unique name for the container
-          const containerName = 'quickstart';
-          console.log('\nCreating container...');
-          console.log('\t', containerName);
-          const containerClient = blobServiceClient.getContainerClient(containerName);
-      
-          const blobName = 'quickstart' + uuidv1() + '.jpg';
-      
-          // Get a block blob client
-          const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-      
-          // Display blob name and url
-          console.log(
-            `\nUploading to Azure storage as blob\n\tname: ${blobName}:\n\tURL: ${blockBlobClient.url}`
-          );
-          // Upload data to the blob
-          const uploadBlobResponse = await blockBlobClient.uploadFile(path.join(img.path));
-          console.log(
-            `Blob was uploaded successfully. requestId: ${uploadBlobResponse.requestId}`
-          );
-        
-      
-          // List the blob(s) in the container.
-          var url = "";
-          for await (const blob of containerClient.listBlobsFlat()) {
-            // Get Blob Client from name, to get the URL
-            const tempBlockBlobClient = containerClient.getBlockBlobClient(blob.name);
-    
-            url=tempBlockBlobClient.url;
-          }
-          console.log(url);
-          return url;
+            const blobName = this.getBlobName(file);
+            const blobService = new BlockBlobClient(config.get("AZURE_STORAGE_CONNECTION_STRING"), containerName, blobName);
+            const stream = getStream(file.buffer);
+            const streamLength = file.buffer.length;
+            await blobService.uploadStream(stream, streamLength);
+            const containerClient = blobServiceClient.getContainerClient(containerName);
+            const blobs = containerClient.listBlobsFlat();
+            let URL = "";
+            for await (let blob of blobs) {
+                if (blob.name === blobName) {
+                    URL = containerClient.getBlockBlobClient(blob.name).url;
+                    break;
+                }
+            }
+            return URL;
         }
-       
         catch (err) {
-          console.log(`Error: ${err.message}`);
-        }
-      },
-    // getStatus: (statusString) => {
-    //     const status = {
-    //         "NOT ACCEPTED": 0,
-    //         "ACCEPTED": 1,
-    //         "LOADED": 2,
-    //         "DISPATCHED": 3,
-    //         "ARRIVED": 4,
-    //         "DELIVERED": 5,
-    //         "REJECTED": 6
-    //     }
-    //     console.log({ status: status[statusString] });
-    //     return status[statusString]
-    // },
-    // pushNotification: require('./Notification'),
-    // smsNotification: require('./Sms'),
-    // csvParser: async (fileName) => {
-    //     let records = [];
-    //     return new Promise(function (resolve, reject) {
-    //         fs.createReadStream(path.resolve(__dirname, `../uploads/files/virtual/${fileName}`))
-    //             .pipe(csv())
-    //             .on('data', function (row) {
-    //                 records.push(row);
-    //             })
-    //             .on('end', function () {
-    //                 resolve(records);
-    //             })
-    //             .on('error', reject);
-    //     })
-    // }
-    addPermissionToDB : async(app)=>{
-        try {
-            Models.Apipermission.collection.drop();
-            let allApi = getEndpoints(app);
-            console.log(allApi);
-            var n = new Models.Apipermission;
-            n.userType = "ADMIN";
-            allApi.forEach(e=>{
-                n.permissions.push(e.path);
-                // n.save(()=>{
-                //     console.log("done");
-                // });
-            })
-            n.save();
-        } catch (error) {
-            
+            console.log(`Error: ${err.message}`);
         }
     },
-    addApisToDB : async(app)=>{
-    try{
-        Models.Apis.collection.drop();
-        let allapis = getEndpoints(app);
-        
-        allapis.forEach(e=>{
-            var x = e.path;
-            var n = new Models.Apis;
-            n.path = e.path;
-            n.methods = e.methods;
-            n.name = x.substring(8),
-            n.isDeleted = false,
-            n.save()
-        })   
-    }catch(error)
-    {
-        throw error;
+    deleteFile: async function (fileUrl) {
+        try {
+            const options = {
+                deleteSnapshots: 'include' // or 'only'
+            };
+            let blobName = fileUrl.split('/');
+            blobName = blobName[blobName.length - 1];
+            const containerClient = blobServiceClient.getContainerClient(containerName);
+            const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+            await blockBlobClient.deleteIfExists(options);
+            return true;
+        }
+        catch (err) {
+            return false;
+        }
+    },
+    validateApiPermissions: async (req, res, next) => {
+        let API_PERMISSIONS = {
+            WITHOUT_AUTH_APIS: [
+                '/api/v1/admin/login',
+                '/api/v1/client'
+            ],
+            ADMIN: [
+
+            ],
+            CLIENT: [
+                'api/v1/'
+            ]
+        };
+
+        try {
+            let URL = req.originalUrl;
+            let allowed = false;
+            if (API_PERMISSIONS.WITHOUT_AUTH_APIS.includes(URL)) {
+                return next();
+            }
+            if (req.headers.authorization) {
+                let authToken = req.headers.authorization;
+                let decodedToken = await jwt.verify(authToken, config.get("JWT_OPTIONS").SECRET_KEY);
+                req.user = await Models.user.findOne({ _id: decodedToken._id }).lean();
+                allowed = API_PERMISSIONS[req.user.type].includes(URL);
+                if (allowed) {
+                    return next();
+                }
+                else {
+                    throw new Error(MESSAGES.admin.NOT_AUTHORIZED);
+                }
+            }
+            else {
+                throw new Error(MESSAGES.admin.AUTHORIZATION_IS_MISSING);
+            }
+        }
+        catch (err) {
+            next(err);
+        }
     }
-    }
+
 };

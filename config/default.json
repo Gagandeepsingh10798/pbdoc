@@ -6,11 +6,24 @@
         "TOKEN_EXPIRES_IN": 3600,
         "REFRESH_TOKEN_EXPIRES_IN": 3600
     },
+    "DEVICE_TYPES": {
+        "IOS": "IOS",
+        "ANDROID": "ANDROID",
+        "WEB": "WEB"
+    },
     "USER_TYPES": {
         "ADMIN": "ADMIN",
         "SUB_ADMIN": "SUB_ADMIN",
         "CLIENT": "CLIENT",
         "DEVELOPER": "DEVELOPER",
         "TESTER": "TESTER"
-    }
+    },
+    "STATUS_TYPES": {
+        "ACTIVE": "ACTIVE",
+        "BLOCKED": "BLOCKED",
+        "INACTIVE": "INACTIVE",
+        "RESTRICT": "RESTRICT"
+    },
+    "AZURE_STORAGE_CONNECTION_STRING": "DefaultEndpointsProtocol=https;AccountName=pbdocstorage;AccountKey=CfJ1tRJAV0kh41BTLgD3iEHGcTeZ+co3LQ4dTYP9Ws8PA+izozIQwAU4meDU9qgivonLvRv4UVVr+AStUnmv9w==;EndpointSuffix=core.windows.net",
+    "AZURE_STORAGE_CONTAINER_NAME": "file-container"
 }

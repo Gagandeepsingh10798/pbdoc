@@ -1,3 +1,5 @@
 module.exports = {
-    admin: require('./admin')
+    admin: require('./admin'),
+    client: require('./client'),
+    module: require('./module')
 };

@@ -1,21 +1,12 @@
+const config = require('config');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const USER_TYPES = Object.values(config.get('USER_TYPES'));
+
 const UserModel = new Schema({
-    profilePic: {
+    userName: {
         type: String,
         default: ''
-    },
-    firstName: {
-        type: String,
-        default: "",
-        lowercase: true,
-        trim: true
-    },
-    lastName: {
-        type: String,
-        default: "",
-        lowercase: true,
-        trim: true
     },
     email: {
         type: String,
@@ -36,21 +27,9 @@ const UserModel = new Schema({
         type: String,
         default: ''
     },
-    address: {
-        type: String,
-        default: ''
-    },
     type: {
         type: String,
-        enum: ['ADMIN','CLIENT']
-    },
-    deviceType: {
-        type: String,
-        enum: ['IOS', 'ANDROID', 'WEB']
-    },
-    deviceToken: {
-        type: String,
-        default: ''
+        enum: USER_TYPES
     },
     isDeleted: {
         type: Boolean,
@@ -62,5 +41,5 @@ const UserModel = new Schema({
     toJSON: { virtuals: true }
 });
 const User = mongoose.model('User', UserModel);
-User.createIndexes({email: 1, phone: 1, countryCode: 1});
+User.createIndexes({ userName: 1, email: 1, phone: 1, countryCode: 1 });
 module.exports = User;

@@ -1,45 +1,39 @@
-const MongoClient = require('mongodb').MongoClient;
 const config = require('config');
 const http = require("http");
-const {getEndpoints} = require('express-routes');
 const cors = require("cors");
 const morgan = require('morgan');
 const express = require("express");
 const path = require("path");
 const Models = require("./data-models");
 const mongoose = require('mongoose');
-const swaggerUI = require('swagger-ui-express');
-const swaggerDocument = require('./swagger-doc/v1/client/swagger.json');
-const swaggerdocumentmodule = require("./swagger-doc/v1/module/swagger.json");
-const swaggerdocumentlogs = require("./swagger-doc/v1/logs/swagger.json");
 const controllers = require('./v1/controllers');
 const cron = require('node-cron');
+const universal = require('./utils');
 const route = require('./route');
 const app = express();
-const helperFunctions = require('./utils/index')
 app.use(cors());
 
 /*
 Initialize Server
 */
 let server = http.createServer(app);
-server.listen(config.get('PORT'), () => {
-    console.log(`****************************************** ${'ENVIRONMENT:::' + process.env.NODE_ENV} *******************************************************`);
-    console.log(`****************************************** ${'PORT:::' + config.get('PORT')} *******************************************************`);
+server.listen(config.get('PORT'), async () => {
+    try {
+        console.log(`****************************************** ${'ENVIRONMENT:::' + process.env.NODE_ENV} *******************************************************`);
+        console.log(`****************************************** ${'PORT:::' + config.get('PORT')} *******************************************************`);
+        /*
+        Database Connection
+        */
+        await mongoose.connect(config.get('DB_URL'), { useNewUrlParser: true, useUnifiedTopology: true });
+        console.log(`****************************************** MONGODB CONNECTED ***********************************************`);
+    }
+    catch (err) {
+        console.log(`************************* MONGODB CONNECTION ERROR *********************************`);
+        console.log(err);
+    }
+
 });
 
-/*
-Database Connection
-*/
-mongoose.connect(config.get('DB_URL'), { useNewUrlParser: true, useUnifiedTopology: true })
-.then(
-    async (db) => {
-        console.log(`******************************************MONGODB CONNECTED ***********************************************`)
-        await helperFunctions.addApisToDB(app)
-        await helperFunctions.addPermissionToDB(app);
-    },
-    (err) => console.log("MongoDB " + String(err.message)),
-);
 
 /* 
 View Engine Setup
@@ -52,6 +46,13 @@ Middelwares
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use((req, res, next) => {
+    universal.validateApiPermissions(req, res, next)
+});
+/*
+Static Paths
+*/
+app.use('/uploads', express.static(path.join(__dirname, './uploads')));
 
 /*
 Test API
@@ -63,24 +64,8 @@ app.use('/test', async (req, res, next) => {
 /*
 API Routes
 */
-const { client } = require('./data-models');
-
 app.use('/api', route);
-app.use('/uploads', express.static(path.join(__dirname, './uploads')));
 
-app.use('/api-docs/:params', (req,res,next) => {
-    if(req.params.params === "modules"){
-        SWAGGER_DOCS = swaggerdocumentmodule    
-    }
-    if(req.params.params === "clients"){
-        SWAGGER_DOCS = swaggerDocument    
-    }
-    if(req.params.params === "logs"){
-        SWAGGER_DOCS = swaggerdocumentlogs    
-    }
-
-    next();
-}, swaggerUI.serve, swaggerUI.setup(swaggerdocumentlogs));
 /*
 Catch 404 Error
 */
@@ -92,6 +77,7 @@ app.use(async (req, res, next) => {
 Error Handler
 */
 app.use(async (err, req, res, next) => {
+    console.log(err);
     const LogsModel = Models.logs;
     await new LogsModel({ message: err.message, stack: err.stack }).save();
     if (err.message == "jwt expired" || err.message == "invalid signature" || err.message == "No Auth") err.status = 401;
@@ -104,7 +90,7 @@ app.use(async (err, req, res, next) => {
 Cron Tasks
 */
 const clearLogs = cron.schedule('0 * * * *', async () => {
-     controllers.admin.clearLogs();
+    controllers.admin.clearLogs();
 });
 
 clearLogs.start();
