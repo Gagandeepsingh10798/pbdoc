@@ -20,7 +20,7 @@ const AdminDataManagement = function () {
             console.log(profile);
       await validations.validateCreateAdmin(adminData);
       const { email, phone, countryCode } = adminData;
-      let userType = await config.get("USER_TYPES").ADMIN;
+      let userType = await config.get("USER_TYPES").CLIENT;
       let userExists = await AdminModel.findOne({
         type: userType,
         email,
@@ -79,21 +79,21 @@ const AdminDataManagement = function () {
         : PROJECTIONS.createAdmin;
       await validations.validateCheckAdminExists(adminData);
       let isExists = false;
-      let userType = await config.get("USER_TYPES").ADMIN;
+      let userType = await config.get("USER_TYPES").CLIENT;
       const { email, phone, countryCode, _id } = adminData;
       if (_id) {
         isExists = await AdminModel.findOne(
-          { type: userType, _id: ObjectId(_id), isDeleted: false },
+          {  _id: ObjectId(_id), isDeleted: false },
           Projection
         ).lean();
       } else if (email) {
         isExists = await AdminModel.findOne(
-          { type: userType, email, isDeleted: false },
+          { email, isDeleted: false },
           Projection
         ).lean();
       } else if (phone && countryCode) {
         isExists = await AdminModel.findOne(
-          { type: userType, phone, countryCode, isDeleted: false },
+          {  phone, countryCode, isDeleted: false },
           Projection
         ).lean();
       }
