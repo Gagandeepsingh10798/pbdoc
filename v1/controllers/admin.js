@@ -402,7 +402,7 @@ module.exports = {
             next(error);
         }
     },
-    notification: async (req, res, next) => {
+        notification: async (req, res, next) => {
         
             try {
                 let ClientModel = new ClientDataManagement();
@@ -415,14 +415,21 @@ module.exports = {
             }
          
     },
+    adminPayload:async(req,res,next) => {
+        try {
+            let payload = {
+                "userType": "ADMIN",
+                "isHomeEnabled":true,
+                "isLogsEnabled":true,
+                "isModuleEnabled":true,
+                "isClientsEnabled":true,
+                "isPermissionEnabled":true
+            }
+            await universal.response(res, CODES.OK, MESSAGES.admin.PAYLOAD_SENT_SUCCESSFULLY, payload);
+        } catch (error) {
+            
+        }
 
-
-
-
-
-
-
-
-
+    }
 
 };

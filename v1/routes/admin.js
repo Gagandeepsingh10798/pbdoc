@@ -27,7 +27,6 @@ router.get('/client',validations.admin.isAdminValid,controllers.admin.getClient)
 router.get('/client/:id',validations.admin.isAdminValid,controllers.admin.getClientbyid);
 router.put('/client/:id',validations.admin.isAdminValid,validations.admin.updateCreateCLient,controllers.admin.updateClient);
 router.delete('/client/:id',controllers.admin.deleteClient);
-
 /*
 Module APIs
 */
@@ -55,11 +54,17 @@ Store Api's to database
 */
 router.get('/apis',controllers.admin.getAllApi);
 router.post('/permissions',controllers.admin.addPermission);
+router.post('/permissions',controllers.admin.addPermission)
 router.get('/permissions',controllers.admin.getPermissionsByUserType);
 router.delete('/permissions',controllers.admin.deletePermissions);
 /*
  Send Notification to Clients
 */
+
 router.post('/notify',controllers.admin.notification);
 
+/*
+Extras
+*/
+router.get('/adminPayload',controllers.admin.adminPayload)
 module.exports = router;
