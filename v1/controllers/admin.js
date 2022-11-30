@@ -415,15 +415,14 @@ module.exports = {
             }
          
     },
-    adminPayload:async(req,res,next) => {
+    userPayload:async(req,res,next) => {
         try {
             let payload = {
                 "userType": "ADMIN",
                 "isHomeEnabled":true,
                 "isLogsEnabled":true,
                 "isModuleEnabled":true,
-                "isClientsEnabled":true,
-                "isPermissionEnabled":true
+                "isPermissionsEnabled":true
             }
             await universal.response(res, CODES.OK, MESSAGES.admin.PAYLOAD_SENT_SUCCESSFULLY, payload);
         } catch (error) {

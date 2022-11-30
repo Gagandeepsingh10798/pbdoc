@@ -66,5 +66,5 @@ router.post('/notify',controllers.admin.notification);
 /*
 Extras
 */
-router.get('/adminPayload',controllers.admin.adminPayload)
+router.get('/userPayload',controllers.admin.userPayload)
 module.exports = router;
