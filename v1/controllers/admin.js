@@ -1,4 +1,4 @@
-const { AdminDataManagement, ClientDataManagement, ModuleDataManagement, LogsDataManagement, ClientXModuleDataManagement} = require('../data-management');
+const { AdminDataManagement, ClientDataManagement, ModuleDataManagement, LogsDataManagement, ClientXModuleDataManagement,permissionDataManagement} = require('../data-management');
 const universal = require('../../utils');
 const { CODES, MESSAGES } = require('../../constants');
 const Models = require("../../data-models");
