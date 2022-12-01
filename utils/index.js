@@ -66,7 +66,7 @@ module.exports = {
     },
     verifyAuthToken: async (token) => {
         try {
-            return await jwt.verify(token, config.get("JWT_OPTIONS").SECRET_KEY);
+            return  jwt.verify(token, config.get("JWT_OPTIONS").SECRET_KEY);
         } catch (error) {
             throw error;
         }

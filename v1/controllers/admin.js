@@ -429,6 +429,17 @@ module.exports = {
             
         }
 
+    },
+    nodeDetails: async(req,res,next)=>{
+        try{
+
+                // here we have to add these node Details to node Model, in this we will be given nodeId, nodeIcon
+                await universal.response(res, CODES.OK, MESSAGES.admin.PAYLOAD_SENT_SUCCESSFULLY, req.body);
+        }
+        catch(error){
+
+        }
+
     }
 
 };
