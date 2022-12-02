@@ -11,7 +11,9 @@ const VisModel = new Schema({
         label:String,
         title:String,
         x:String,
-        y:String
+        y:String,
+        heading: String,
+        description: String
      }] ,
     edges : [{
         from : String,
