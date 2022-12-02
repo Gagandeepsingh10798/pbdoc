@@ -9,6 +9,24 @@ const bullQueue= new Queue('bullQueue',{
         port:REDIS_PORT,host:REDIS_URI
     }
 });
+var nodeDetails = {
+
+    "id":"1029",
+
+    "label":"Node - 0019",
+
+    "title":"Node - 0019",
+
+    "x":"1009",
+
+    "y":"4509",
+    
+    "heading":"this is head2",
+
+    "description":"this is desc2",
+    
+    "editorData":"this is editorSpace2"
+}
 module.exports = {
     signup: async (req, res, next) => {
         try {
@@ -443,14 +461,30 @@ module.exports = {
     },
     nodeDetails: async(req,res,next)=>{
         try{
+                await universal.response(res, CODES.OK, MESSAGES.admin.PAYLOAD_SENT_SUCCESSFULLY, nodeDetails);
+        }
+        catch(error){
 
-                // here we have to add these node Details to node Model, in this we will be given nodeId, nodeIcon
-                await universal.response(res, CODES.OK, MESSAGES.admin.PAYLOAD_SENT_SUCCESSFULLY, req.body);
+        }
+
+    },
+    updateNodeDetails: async(req,res,next)=>{
+        try{
+            nodeDetails.id = req.params.id,
+            nodeDetails.label = req.body.label,
+            nodeDetails.description = req.body.description,
+            nodeDetails.title = req.body.title,
+            nodeDetails.x = req.body.x,
+            nodeDetails.y = req.body.y,
+            nodeDetails.heading = req.body.heading,
+            nodeDetails.editorData = req.body.editorData
+                await universal.response(res, CODES.OK, MESSAGES.admin.PAYLOAD_SENT_SUCCESSFULLY, nodeDetails);
         }
         catch(error){
 
         }
 
     }
+    
 
 };

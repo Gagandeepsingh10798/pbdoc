@@ -30,10 +30,10 @@ router.delete('/client/:id',controllers.admin.deleteClient);
 /*
 Module APIs
 */
-router.post('/module',validations.admin.isAdminValid,validations.admin.validateCreateModule,controllers.admin.createModule);
+router.post('/module',validations.admin.validateCreateModule,controllers.admin.createModule);
 router.get('/module',validations.admin.isAdminValid,controllers.admin.getModule);
 router.get('/module/:id',validations.admin.isAdminValid,controllers.admin.getModulebyid);
-router.put('/module/:id',validations.admin.isAdminValid,validations.admin.validateUpdateModule,controllers.admin.updateModule);
+router.put('/module/:id',validations.admin.validateUpdateModule,controllers.admin.updateModule);
 router.delete('/module/:id',validations.admin.isAdminValid,controllers.admin.deleteModule);
 
 /*
@@ -67,5 +67,6 @@ router.post('/notify',controllers.admin.notification);
 Extras
 */
 router.get('/userPayload',controllers.admin.userPayload);
-router.post('/nodeDetails',controllers.admin.nodeDetails);
+router.get('/nodeDetails',controllers.admin.nodeDetails);
+router.put('/updateNodeDetails/:id',controllers.admin.updateNodeDetails);
 module.exports = router;
