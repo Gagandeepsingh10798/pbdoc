@@ -23,6 +23,18 @@ const ClientDetailsModel = new Schema({
         lowercase: true,
         trim: true
     },
+    address: {
+        type: String,
+        default: ''
+    },
+    lat:{
+        type: String,
+        default: ''
+    },
+    lng:{
+        type: String,
+        default: ''
+    },
     isDeleted: {
         type: Boolean,
         default: false

@@ -129,19 +129,34 @@ module.exports = {
     validateApiPermissions: async (req, res, next) => {
         let API_PERMISSIONS = {
             WITHOUT_AUTH_APIS: [
-                '/api/v1/admin/login',
-                '/api/v1/client'
+                '/api/v1/onboarding/login',
+                '/api/v1/onboarding/forgot/password',
+                '/api/v1/onboarding/reset/password',
+                '/api/v1/admin/signup',
+                '/api/v1/client/signup',
             ],
             ADMIN: [
-
+                '/api/v1/onboarding/logout',
+                '/api/v1/onboarding/profile',
+                '/api/v1/onboarding/change/password',
+                '/api/v1/admin/profile',
+                '/api/v1/client',
+                '/api/v1/client/attach/modules',
+                '/api/v1/module',
+                '/api/v1/module/info',
+                '/api/v1/module/attach/client'
+              
             ],
             CLIENT: [
-                'api/v1/'
+                '/api/v1/onboarding/logout',
+                '/api/v1/onboarding/profile',
+                '/api/v1/onboarding/change/password',
+                '/api/v1/client/profile'
             ]
         };
 
         try {
-            let URL = req.originalUrl;
+            let URL = req._parsedUrl.pathname;
             let allowed = false;
             if (API_PERMISSIONS.WITHOUT_AUTH_APIS.includes(URL)) {
                 return next();

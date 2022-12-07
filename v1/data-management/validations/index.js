@@ -70,15 +70,17 @@ module.exports = {
             throw err;
         }
     },
-    validateUpdateAdmin: async (data) => {
+    validateUpdateUser: async (data) => {
         try {
             let schema = joi.object().keys({
-                firstName: joi.string().min(3).max(50).optional(),
-                lastName: joi.string().min(3).max(50).optional(),
+                name: joi.string().min(3).max(100).optional(),
+                description: joi.string().min(3).max(250).optional(),
+                logo: joi.string().min(3).max(50).optional(),
+                domain: joi.string().min(3).max(50).optional(),
                 email: joi.string().trim().lowercase().optional(),
                 phone: joi
                     .string()
-                    .regex(/^[0-9]+$/)
+                    .regex(/^\d+$/)
                     .min(5)
                     .optional(),
                 countryCode: joi
@@ -87,8 +89,12 @@ module.exports = {
                     .trim()
                     .min(2)
                     .optional(),
+                address: joi.string().min(3).max(150).optional(),
+                lat: joi.string().min(3).max(50).optional(),
+                lng: joi.string().min(3).max(50).optional(),
+                firstName: joi.string().min(3).max(50).optional(),
+                lastName: joi.string().min(3).max(50).optional(),
                 password: joi.string().min(3).max(50).optional(),
-                address: joi.string().min(3).max(50).optional(),
                 deviceType: joi.string().allow(...['IOS', 'ANDROID', 'WEB']).optional(),
                 deviceToken: joi.string().optional()
             });

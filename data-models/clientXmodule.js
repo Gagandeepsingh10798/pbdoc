@@ -4,17 +4,16 @@ const Schema = mongoose.Schema;
 const ClientXModuleModel = new Schema({
     clientId: {
         type: ObjectId,
-        ref: 'Client',
+        ref: 'users',
     },
     moduleId: {
         type: ObjectId,
-        ref: 'Modules'
+        ref: 'modules'
     },
     isDeleted: {
         type: Boolean,
         default: false
     }
-
 },{
     timestamps: true,
     toObject: { virtuals: true },

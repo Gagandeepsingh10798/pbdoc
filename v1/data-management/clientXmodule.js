@@ -6,11 +6,10 @@ const universal = require("../../utils");
 const config = require("config");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
-const moment = require("moment");
 const clientXmoduleDataManagement = function () {
   const ClientXModuleModel = Models.clientXmodules;
-  const ClientModel = Models.client;
   const ModuleModel = Models.modules;
+  const VisModel = Models.vis;
 
   this.attachtable = async (Clientid, moduleArray) => {
     try {
@@ -133,7 +132,7 @@ const clientXmoduleDataManagement = function () {
         {
           $unwind: "$clientId",
         },
-      { $group: { _id: "$moduleId", clients: { $push: "$clientId" } } },
+        { $group: { _id: "$moduleId", clients: { $push: "$clientId" } } },
         {
           $project: { module: "$_id", clients: "$clients" },
         },
@@ -172,12 +171,12 @@ const clientXmoduleDataManagement = function () {
     }
   };
 
-  this.deletebyclientid = async (clientId,modulesIds) => {
+  this.deletebyclientid = async (clientId, modulesIds) => {
     try {
 
       await this.checkClientExists(clientId);
-      await ClientXModuleModel.deleteMany({clientId: ObjectId(clientId), moduleId: {$in:modulesIds }});
-      return this.getattachtable({clientid: clientId});
+      await ClientXModuleModel.deleteMany({ clientId: ObjectId(clientId), moduleId: { $in: modulesIds } });
+      return this.getattachtable({ clientid: clientId });
     } catch (err) {
       throw err;
     }
@@ -234,6 +233,66 @@ const clientXmoduleDataManagement = function () {
       throw err;
     }
   };
+
+  this.attachModules = async (moduleIdsArray, clientId) => {
+    try {
+
+      await ClientXModuleModel.deleteMany({
+        clientId: ObjectId(clientId)
+      });
+
+      moduleIdsArray.forEach(async (moduleId) => {
+        await new ClientXModuleModel({
+          clientId: ObjectId(clientId),
+          moduleId: ObjectId(moduleId)
+        }).save();
+      });
+
+
+      let modules = await ModuleModel.find({
+        _id: { $in: moduleIdsArray }
+      }).lean();
+
+      for(var i=0; i<modules.length; i++){
+        modules[i].visFlow = await VisModel.findOne({
+          moduleId: modules[i]._id
+        }).lean();
+      }
+
+      return modules;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  this.getAttachedModules = async (clientId) => {
+    try {
+      let clientXModules = await ClientXModuleModel.find({
+        clientId: ObjectId(clientId)
+      });
+
+      let moduleIdsArray = [];
+      clientXModules.forEach((item) => {
+        moduleIdsArray.push(ObjectId(item.moduleId));
+      });
+
+
+      let modules = await ModuleModel.find({
+        _id: { $in: moduleIdsArray }
+      }).lean();
+
+      for(var i=0; i<modules.length; i++){
+        modules[i].visFlow = await VisModel.findOne({
+          moduleId: modules[i]._id
+        }).lean();
+      }
+
+      return modules;
+    } catch (err) {
+      throw err;
+    }
+  };
+
 };
 
 module.exports = clientXmoduleDataManagement;

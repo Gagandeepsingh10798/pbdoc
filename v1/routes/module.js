@@ -5,9 +5,9 @@ const services = require('../services');
 /*
 Modules APIs
 */
-router.post('/', services.fileUpload.FileUpload.single("businessDocument"), validations.module.validateCreateModule, controllers.module.createClient);
-router.get('/', controllers.client.getClients);
-router.get('/:id', controllers.client.getClientById);
-router.put('/:id', services.fileUpload.FileUpload.single("logo"), validations.client.updateClientById, controllers.client.updateClientById);
+router.post('/signup', services.fileUpload.FileUpload.single("businessDocument"), validations.module.validateCreateModule, controllers.module.createModule);
+router.get('/', controllers.module.getModule);
+router.get('/info', controllers.module.getModuleById);
+router.put('/info', services.fileUpload.FileUpload.single("businessDocument"), controllers.module.updateModule);
 
 module.exports = router;

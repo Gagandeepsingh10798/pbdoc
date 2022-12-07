@@ -15,22 +15,22 @@ module.exports = {
     login: async (req, res, next) => {
         try {
             let AdminModel = new AdminDataManagement();
-            let admin = await AdminModel.checkAdminExists({
+            let user = await AdminModel.checkUserExists({
                 email: req.body.email || ''
             }, true);
             const { password } = req.body;
             delete req.body.password;
-            const isPasswordMatched = await universal.comparePasswordUsingBcrypt(password, admin.password);
+            const isPasswordMatched = await universal.comparePasswordUsingBcrypt(password, user.password);
             if (!isPasswordMatched) {
                 throw new Error(MESSAGES.admin.PASSWORD_NOT_MATCH);
             }
-            admin = await AdminModel.updateAdmin({ _id: admin._id }, req.body);
-            let tokens = await AdminModel.createNewTokens(admin._id);
-            admin.authorization = {
+            user = await AdminModel.updateAdmin({ _id: user._id }, req.body);
+            let tokens = await AdminModel.createNewTokens(user._id);
+            user.authorization = {
                 token: tokens.token,
                 refreshToken: tokens.refreshToken
             };
-            await universal.response(res, CODES.OK, MESSAGES.admin.ADMIN_LOGGED_IN_SUCCESSFULLY, admin);
+            await universal.response(res, CODES.OK, MESSAGES.admin.USER_LOGGEDIN_SUCCESSFULLY, user);
         }
         catch (error) {
             next(error);
@@ -40,7 +40,7 @@ module.exports = {
         try {
             let AdminModel = new AdminDataManagement();
             await AdminModel.clearTokens(req.user._id);
-            await universal.response(res, CODES.OK, MESSAGES.admin.ADMIN_LOGGED_OUT_SUCCESSFULLY, {});
+            await universal.response(res, CODES.OK, MESSAGES.admin.USER_LOGGED_OUT_SUCCESSFULLY, {});
         }
         catch (error) {
             next(error);

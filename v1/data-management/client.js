@@ -84,12 +84,23 @@ const ClientDataManagement = function () {
 
   this.getClients = async (queryData) => {
     try {
-      let clients = await ClientDetailsModel.aggregate([
-        {
+      let matchStatement = {
+        $match: {
+          "isDeleted": false
+        }
+      }
+
+      if(queryData.id){
+        matchStatement = {
           $match: {
-            isDeleted: false
+            "userId":  ObjectId(queryData.id),
+            "isDeleted": false
           }
-        },
+        }
+      }
+
+      let pipeline = [
+        matchStatement,
         {
           $lookup: {
             from: "users",
@@ -104,7 +115,12 @@ const ClientDataManagement = function () {
         {
           $project: PROJECTIONS.getClients
         }
-      ]);
+      ]
+
+      let clients = await ClientDetailsModel.aggregate(pipeline);
+      if(queryData.id && clients.length){
+          return clients[0];
+      }
       return clients;
     } catch (err) {
       throw err;

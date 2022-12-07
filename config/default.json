@@ -24,6 +24,6 @@
         "INACTIVE": "INACTIVE",
         "RESTRICT": "RESTRICT"
     },
-    "AZURE_STORAGE_CONNECTION_STRING": "DefaultEndpointsProtocol=https;AccountName=pbdocstorage;AccountKey=CfJ1tRJAV0kh41BTLgD3iEHGcTeZ+co3LQ4dTYP9Ws8PA+izozIQwAU4meDU9qgivonLvRv4UVVr+AStUnmv9w==;EndpointSuffix=core.windows.net",
-    "AZURE_STORAGE_CONTAINER_NAME": "file-container"
+    "AZURE_STORAGE_CONNECTION_STRING": "DefaultEndpointsProtocol=https;AccountName=documentation1998;AccountKey=tbHK8lvMYSOWwisgt3As95QN/2BrQn0psiMi6mkjobGxKSjW3TdNtGKlLSKgRsC3jJ9/tQg3hsxw+ASt7Y17cA==;EndpointSuffix=core.windows.net",
+    "AZURE_STORAGE_CONTAINER_NAME": "files"
 }

@@ -11,12 +11,17 @@ const VisModel = new Schema({
         label:String,
         title:String,
         x:String,
-        y:String
+        y:String,
+        icon: String
      }] ,
     edges : [{
         from : String,
         to : String
-         }],
+    }],
+    isDeleted: {
+        type: Boolean,
+        default: false
+    }
 });
 const Vis =mongoose.model('Vis',VisModel);
 module.exports = Vis;

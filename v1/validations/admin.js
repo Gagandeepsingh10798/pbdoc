@@ -53,6 +53,7 @@ module.exports = {
     validateUpdateProfile: async (req, res, next) => {
         try {
             let schema = joi.object().keys({
+                userName: joi.string().min(5).max(50).optional(),
                 firstName: joi.string().min(3).max(50).optional(),
                 lastName: joi.string().min(3).max(50).optional(),
                 email: joi.string().trim().lowercase().optional(),

@@ -132,10 +132,45 @@ const AdminDataManagement = function () {
     }
   };
 
+  this.checkUserExists =  async (adminData, isLogin) => {
+    try {
+      const Projection = isLogin ? PROJECTIONS.createAdminWithPassword : PROJECTIONS.createAdmin;
+      await validations.validateCheckAdminExists(adminData);
+      let isExists = false;
+      const { email, phone, countryCode, _id } = adminData;
+      if (_id) {
+        isExists = await AdminModel.findOne(
+          { _id: ObjectId(_id), isDeleted: false },
+          Projection
+        ).lean();
+      } else if (email) {
+        isExists = await AdminModel.findOne(
+          {  email, isDeleted: false },
+          Projection
+        ).lean();
+      } else if (phone && countryCode) {
+        isExists = await AdminModel.findOne(
+          { phone, countryCode, isDeleted: false },
+          Projection
+        ).lean();
+      }
+
+      if (!isExists) throw new Error(MESSAGES.admin.USER_NOT_EXISTS);
+      let userDetails = await AdminDetailsModel.findOne({ userId: isExists._id }, Projection).lean();
+      isExists = {
+        ...userDetails,
+        ...isExists
+      };
+      return isExists;
+    } catch (err) {
+      throw err;
+    }
+  };
+
   this.updateAdmin = async (findByData, adminData) => {
     try {
       await validations.validateUpdateAdmin(adminData);
-      let admin = await this.checkAdminExists(findByData);
+      let admin = await this.checkUserExists(findByData);
       if (adminData && adminData.password) {
         adminData.password = await universal.hashPasswordUsingBcrypt(
           adminData.password
@@ -202,7 +237,7 @@ const AdminDataManagement = function () {
   this.clearTokens = async (adminId) => {
     try {
       adminId = ObjectId(adminId);
-      await this.checkAdminExists({ _id: adminId });
+      await this.checkUserExists({ _id: adminId });
       await AuthTokenModel.findOneAndUpdate(
         { user: adminId },
         { token: "", refreshToken: "" }
@@ -258,6 +293,12 @@ const AdminDataManagement = function () {
         }
         updatePayload.profilePic = await universal.uploadFile(updatePayload.profilePic);
         profilePicUploaded = true;
+      }
+      if (updatePayload.userName) {
+        let isUserNameExists = await AdminModel.findOne({ userName: updatePayload.userName }).lean();
+        if(isUserNameExists){
+          throw new Error(MESSAGES.admin.USERNAME_ALREADY_EXISTS);
+        }
       }
       await AdminModel.findOneAndUpdate({ _id: userId }, updatePayload);
       await AdminDetailsModel.findOneAndUpdate({ userId }, updatePayload);

@@ -1,4 +1,5 @@
 module.exports = {
+    UserDataManagement: require('./user'),
     AdminDataManagement: require('./admin'),
     ClientDataManagement:require("./client"),
     ModuleDataManagement:require("./module"),
