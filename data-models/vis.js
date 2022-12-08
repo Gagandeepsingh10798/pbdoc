@@ -12,7 +12,12 @@ const VisModel = new Schema({
         title:String,
         x:String,
         y:String,
-        icon: String
+        icon: String,
+        modal: {
+            title: String,
+            description: String,
+            deatils: String
+        }
      }] ,
     edges : [{
         from : String,
