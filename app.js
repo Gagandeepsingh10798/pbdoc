@@ -89,8 +89,8 @@ app.use(async (err, req, res, next) => {
 /*
 Cron Tasks
 */
-const clearLogs = cron.schedule('0 * * * *', async () => {
-    controllers.admin.clearLogs();
-});
+// const clearLogs = cron.schedule('0 * * * *', async () => {
+//     controllers.admin.clearLogs();
+// });
 
-clearLogs.start();
+// clearLogs.start();

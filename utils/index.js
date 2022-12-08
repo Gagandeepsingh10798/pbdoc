@@ -143,8 +143,10 @@ module.exports = {
                 '/api/v1/client',
                 '/api/v1/client/attach/modules',
                 '/api/v1/module',
+                '/api/v1/module/signup',
                 '/api/v1/module/info',
-                '/api/v1/module/attach/client'
+                '/api/v1/module/attach/client',
+                '/api/v1/logs'
               
             ],
             CLIENT: [

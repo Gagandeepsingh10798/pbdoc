@@ -1,71 +1,32 @@
 const Models = require("../../data-models");
-const validations = require("./validations");
 const PROJECTIONS = require("./Projections");
 const { MESSAGES } = require("../../constants");
-const universal = require("../../utils");
-const config = require("config");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
-const moment = require("moment");
 const LogsDataManagement = function () {
-
-
   const LogsModel = Models.logs;
 
-  this.getlogs = async () => {
+  this.getLogs = async () => {
     try {
-
       let logs = await LogsModel.find({}, PROJECTIONS.createLogs).lean();
       return logs;
-
-
     } catch (err) {
       throw err;
     }
   };
 
-  this.deletelogs = async () => {
+  this.getLogById= async (logId) => {
     try {
-       await LogsModel.deleteMany({});
-    } catch (err) {
-      throw err;
-    }
-  };
-
-  this.clearLogs = async () => {
-    try {
-      await LogsModel.deleteMany({}); 
-      return;
-    } catch (err) {
-      throw err;
-    }
-
-  };
-
-  this.deletelog = async (findId) => {
-    try {
-      const _id = findId;
-      await LogsModel.findOneAndDelete({ _id: ObjectId(_id) });
-    } catch (err) {
-      throw err;
-    }
-  };
-
-  this.getSingleLog= async (logsId) => {
-    try {
-      const _id=logsId;
-      let logsExists = await LogsModel.findById({ _id },PROJECTIONS.createLogs).lean();
-      if (logsExists) {
-        return logsExists;
-      } else {
+      logId = ObjectId(logId);
+      let logsExists = await LogsModel.findOne({ _id: logId },PROJECTIONS.createLogs).lean();
+      if (!logsExists){
         throw new Error(MESSAGES.admin.LOGS_WITH_ID_NOT_EXIST);
-      }
+      }  
+      return logsExists;
     } catch (err) {
       throw err;
     }
   };
-
-
 
 };
 module.exports = LogsDataManagement;
