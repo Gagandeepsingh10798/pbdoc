@@ -72,7 +72,7 @@ const ClientDataManagement = function () {
         ...clientDetails,
         ...client
       };
-
+      console.log(client);
       return client;
     } catch (err) {
       if (logoUploaded && clientData.logo) {

@@ -153,7 +153,8 @@ module.exports = {
                 '/api/v1/onboarding/logout',
                 '/api/v1/onboarding/profile',
                 '/api/v1/onboarding/change/password',
-                '/api/v1/client/profile'
+                '/api/v1/client/profile',
+                '/api/v1/client/attach/modules',
             ]
         };
 

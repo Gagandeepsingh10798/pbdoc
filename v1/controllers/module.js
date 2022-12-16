@@ -42,7 +42,7 @@ module.exports = {
         try {
             let findId = req.query.id;
             let ModuleModel = new ModuleDataManagement();
-            let module = await ModuleModel.updateModuleById(findId, req.body);
+            let module = await ModuleModel.updateModuleById(findId, req.file, req.body);
             await universal.response(res, CODES.OK, MESSAGES.admin.GETMODULE_UPDATED_SUCCESSFULLY, module);
         } catch (error) {
             next(error);

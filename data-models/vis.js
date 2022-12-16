@@ -16,7 +16,7 @@ const VisModel = new Schema({
         modal: {
             title: String,
             description: String,
-            deatils: String
+            details: String
         }
      }] ,
     edges : [{

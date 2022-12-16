@@ -1,6 +1,6 @@
 {
     "PORT": 3082,
-    "DB_URL": "mongodb+srv://chiragArora:navi1234@cluster0.n6se1q4.mongodb.net/test",
+    "DB_URL": "mongodb+srv://krish:krish1234@cluster0.n6se1q4.mongodb.net/test",
     "JWT_OPTIONS": {
         "SECRET_KEY": "XXXXXXXXXXXXXXXXXXXXX",
         "TOKEN_EXPIRES_IN": 3600,

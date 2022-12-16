@@ -41,6 +41,9 @@ module.exports = {
         "logo": 1,
         "domain": 1,
         "name": 1,
+        "address": 1,
+        "lat": 1,
+        "lng": 1,
         "createdAt": "$userId.createdAt",
         "updatedAt": "$userId.updatedAt",
     }

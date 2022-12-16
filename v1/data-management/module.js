@@ -108,11 +108,15 @@ const ModuleDataManagement = function () {
     }
   };
 
-  this.updateModuleById = async (findId, moduleData) => {
+  this.updateModuleById = async (findId,businessDocument, moduleData) => {
+    let businessDocumentUploaded = false;
     try {
-
       await validations.validateUpdateModule(moduleData);
       let module = await this.checkModuleExists(findId);
+      if (businessDocument) {
+        moduleData.businessDocument = await universal.uploadFile(businessDocument);
+        businessDocumentUploaded = true;
+      }
       await ModuleModel.findOneAndUpdate({ _id: ObjectId(module._id) },moduleData);
       if(moduleData.visFlow){
         await VisModel.findOneAndUpdate({ moduleId: module._id }, moduleData.visFlow);
@@ -120,6 +124,9 @@ const ModuleDataManagement = function () {
       module = await this.getModuleById(module._id);
       return module;
     } catch (err) {
+      if (businessDocumentUploaded && moduleData.businessDocument) {
+        await universal.deleteFile(moduleData.businessDocument);
+      }
       throw err;
     }
 
@@ -147,6 +154,7 @@ const ModuleDataManagement = function () {
   };
 
   this.deleteModulebyid = async (findId) => {
+    let businessDocumentUploaded = false;
     try {
       let module = await this.checkModuleExists(findId);
       await ModuleModel.findOneAndDelete({ _id: ObjectId(module._id) });
